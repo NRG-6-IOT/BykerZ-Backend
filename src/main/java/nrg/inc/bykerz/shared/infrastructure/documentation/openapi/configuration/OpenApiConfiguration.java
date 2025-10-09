@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,31 +16,32 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfiguration {
+
     @Bean
-    public OpenAPI learninfPlatformOpenApi() {
-// General configuration
+    public OpenAPI bykerzOpenApi() {
+        // General configuration
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()
-                        .title("APX LearnHive API")
-                        .description("Backend API for APX LearnHive educational platform - Innovative learning solutions powered by APX Startup")
+                        .title("Bykerz API")
+                        .description("Backend API for Bykerz platform - Smart solutions for motorcycle management and maintenance.")
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("APX Development Team")
-                                .email("dev@apxlearnhive.com")
-                                .url("https://apxlearnhive.com"))
+                                .name("Bykerz Development Team")
+                                .email("dev@bykerz.com")
+                                .url("https://bykerz.com"))
                         .license(new License()
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("APX LearnHive Platform Documentation")
-                        .url("https://docs.apxlearnhive.com"))
+                        .description("Bykerz Platform Documentation")
+                        .url("https://docs.bykerz.com"))
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
                                 .description("Local Development Server"),
                         new Server()
-                                .url("https://api.apxlearnhive.com")
+                                .url("https://api.bykerz.com")
                                 .description("Production Server")
                 ));
 
