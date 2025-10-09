@@ -5,6 +5,7 @@ import nrg.inc.bykerz.iam.domain.model.entities.Role;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
+import nrg.inc.bykerz.vehicle.domain.model.aggregates.Vehicle;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,17 +26,26 @@ public class User extends AuditableAbstractAggregateRoot <User>{
     )
     private Set<Role> userRoles;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_vehicles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "vehicle_id")
+    )
+    private Set<Vehicle> user_vehicles;
 
 
     protected User(){
         super();
         this.userRoles = new HashSet<>();
+        this.user_vehicles = new HashSet<>();
     }
 
     public User(String username, String password){
         this.username = username;
         this.password = password;
         this.userRoles = new HashSet<>();
+        this.user_vehicles = new HashSet<>();
     }
 
     public User(String username, String password, List<Role> roles) {
