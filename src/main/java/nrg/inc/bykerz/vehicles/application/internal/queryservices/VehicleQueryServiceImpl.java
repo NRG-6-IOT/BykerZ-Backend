@@ -1,9 +1,8 @@
 package nrg.inc.bykerz.vehicles.application.internal.queryservices;
 
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModelsQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModels;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelById;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleQueryService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,13 @@ public class VehicleQueryServiceImpl implements VehicleQueryService {
         this.vehicleRepository = vehicleRepository;
     }
 
+    @Override
+    public List<Vehicle> handle(GetAllModels getAllModels) {
+        return vehicleRepository.findAll();
+    }
 
     @Override
-    public Optional<Vehicle> handle(GetVehicleByIdQuery query) {
-        return vehicleRepository.findById(query.vehicleId());
+    public Optional<Vehicle> handle(GetModelById getModelById) {
+        return vehicleRepository.findById(getModelById.modelId());
     }
 }
