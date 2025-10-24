@@ -27,7 +27,7 @@ public class ApplicationReadyEventHandler implements ApplicationListener<Applica
         LOGGER.info("Application started at timestamp: {}", currentTimestamp());
         try {
             List<MetricType> existing = metricTypeRepository.findAll();
-            if (existing == null || existing.isEmpty()) {
+            if (existing.isEmpty()) {
                 List<MetricType> defaults = Arrays.asList(
                         new MetricType(1L, "mileage", "Total distance in period"),
                         new MetricType(2L, "fuel_consumption", "Fuel consumption in period")
