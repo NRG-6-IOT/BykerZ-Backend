@@ -6,12 +6,11 @@ import nrg.inc.bykerz.vehicles.interfaces.rest.resources.ModelResource;
 public class ModelResourceFromEntityAssembler {
 
     public static ModelResource toResourceFromEntity(Model model) {
-        var brand = model.getBrand();
 
         return new ModelResource(
                 model.getId(),
                 model.getName(),
-                brand.getBrandName(),
+                model.getBrand(),
                 model.getModelYear(),
                 model.getOriginCountry(),
                 model.getProducedAt(),
