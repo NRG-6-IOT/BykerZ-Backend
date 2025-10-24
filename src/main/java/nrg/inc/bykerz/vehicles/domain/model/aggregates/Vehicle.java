@@ -35,9 +35,11 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.plate = plate;
     }
 
-    public void UpdateVehicle(UpdateVehicleCommand command) {
+    public Vehicle UpdateVehicle(UpdateVehicleCommand command) {
         this.mechanicId = command.mechanicId();
         this.plate = command.plate();
+
+        return this;
     }
 
 
