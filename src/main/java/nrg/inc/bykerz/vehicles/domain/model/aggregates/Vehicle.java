@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
+import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
 
 import java.util.Date;
@@ -32,6 +33,11 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.model = model;
         this.year = year;
         this.plate = plate;
+    }
+
+    public void UpdateVehicle(UpdateVehicleCommand command) {
+        this.mechanicId = command.mechanicId();
+        this.plate = command.plate();
     }
 
 
