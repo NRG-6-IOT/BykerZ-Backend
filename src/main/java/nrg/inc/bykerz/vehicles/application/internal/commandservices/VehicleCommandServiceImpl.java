@@ -11,6 +11,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,9 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     @Override
     public Optional<Vehicle> handle(CreateVehicleCommand command) {
         var model = modelRepository.findById(command.modelId());
+
         if (model.isEmpty()) throw new IllegalArgumentException("Cannot find model with id: " + command.modelId());
+        if (vehicleRepository.existsByPlate(command.plate())) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
 
         try {
             var vehicle = new Vehicle(command.ownerId(), command.mechanicId(), model.get(), command.year(), command.plate());
@@ -40,6 +43,16 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
 
     @Override
     public Optional<Vehicle> handle(UpdateVehicleCommand command) {
-        return Optional.empty();
+        var vehicle = vehicleRepository.findById(command.id());
+        if (vehicle.isEmpty()) throw new IllegalArgumentException("Cannot find vehicle with id: " + command.id());
+        if (Objects.equals(vehicle.get().getPlate(), command.plate()) && vehicleRepository.existsByPlate(command.plate())) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
+        var updatedVehicle = vehicle.get().UpdateVehicle(command);
+
+        try {
+            vehicleRepository.save(updatedVehicle);
+            return Optional.of(updatedVehicle);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error updating vehicle: " + e.getMessage());
+        }
     }
 }
