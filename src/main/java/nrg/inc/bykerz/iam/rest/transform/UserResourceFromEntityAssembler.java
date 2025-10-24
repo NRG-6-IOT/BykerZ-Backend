@@ -2,7 +2,6 @@ package nrg.inc.bykerz.iam.rest.transform;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.domain.model.entities.Role;
-import nrg.inc.bykerz.shared.interfaces.rest.resources.CourseResource;
 import nrg.inc.bykerz.iam.rest.resources.UserResource;
 
 public class UserResourceFromEntityAssembler {
