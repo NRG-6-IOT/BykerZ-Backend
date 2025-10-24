@@ -1,8 +1,9 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest;
 
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModels;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelById;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModelsQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.CreateVehicleResource;
@@ -47,20 +48,6 @@ public class VehiclesController {
         return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    @Operation(summary = "Get all vehicles")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Vehicles retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No vehicles found")
-    })
-    public ResponseEntity<List<VehicleResource>> getAllVehicles() {
-        var vehicles = vehicleQueryService.handle(new GetAllModels());
-        var resources = vehicles.stream()
-                .map(VehicleResourceFromEntityAssembler::toResourceFromEntity)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(resources);
-    }
-
     @GetMapping("/{vehicleId}")
     @Operation(summary = "Get vehicle by ID")
     @ApiResponses({
@@ -68,7 +55,7 @@ public class VehiclesController {
             @ApiResponse(responseCode = "404", description = "Vehicle not found")
     })
     public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long vehicleId) {
-        var vehicle = vehicleQueryService.handle(new GetModelById(vehicleId));
+        var vehicle = vehicleQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         return vehicle.map(v -> ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(v)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
