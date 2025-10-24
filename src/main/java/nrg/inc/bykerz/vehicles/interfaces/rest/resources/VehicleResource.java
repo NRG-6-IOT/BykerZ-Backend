@@ -5,11 +5,8 @@ import java.util.Date;
 public record VehicleResource(
         Long id,
         Long mechanicId,
-
         String modelName,
-
-        String brandName,// from Brand
-
+        String brand,
         String modelYear,
         String originCountry,
         Date producedAt,
@@ -29,8 +26,7 @@ public record VehicleResource(
         String connectivity,
         String durability,
         String octane,
-
-        Date manufacturingDate,
+        String year,
         String plate
 ) {
 }
