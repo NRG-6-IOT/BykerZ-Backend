@@ -8,7 +8,7 @@ public class CreateModelCommandFromResourceAssembler {
     public static CreateModelCommand toCommandFromResource(CreateModelResource resource) {
         return new CreateModelCommand(
                 resource.name(),
-                resource.brandId(), // Brand ya existente
+                resource.brand(),
                 resource.modelYear(),
                 resource.originCountry(),
                 resource.producedAt(),

@@ -8,7 +8,7 @@ public class CreateVehicleCommandFromResourceAssembler {
     public static CreateVehicleCommand toCommandFromResource(CreateVehicleResource resource) {
         return new CreateVehicleCommand(
                 resource.mechanicId(),
-                resource.modelId(), // Model ya existente
+                resource.modelId(),
                 resource.manufacturingDate(),
                 resource.plate()
         );
