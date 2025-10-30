@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.maintenance.domain.application.internal.eventhandlers;
+package nrg.inc.bykerz.maintenance.application.internal.eventhandlers;
 
 import nrg.inc.bykerz.maintenance.domain.model.commands.SeedExpenseTypesCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.SeedItemTypesCommand;

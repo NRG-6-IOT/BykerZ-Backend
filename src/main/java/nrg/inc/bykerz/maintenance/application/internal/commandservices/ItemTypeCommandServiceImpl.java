@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.maintenance.domain.application.internal.commandservices;
+package nrg.inc.bykerz.maintenance.application.internal.commandservices;
 
 
 import nrg.inc.bykerz.maintenance.domain.model.commands.SeedItemTypesCommand;
