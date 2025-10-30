@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExpenseItemRepository extends JpaRepository<ExpenseItem,Long> {
+    void deleteExpenseItemsByExpense_Id(Long expenseId);
 }

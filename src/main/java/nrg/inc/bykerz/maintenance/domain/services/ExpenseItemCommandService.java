@@ -4,9 +4,9 @@ import nrg.inc.bykerz.maintenance.domain.model.agreggates.ExpenseItem;
 import nrg.inc.bykerz.maintenance.domain.model.commands.AddExpenseItemCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteExpenseItemsByExpenseIdCommand;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ExpenseItemCommandService {
-    List<ExpenseItem> handle(AddExpenseItemCommand command);
+    Optional<ExpenseItem> handle(AddExpenseItemCommand command);
     void handle(DeleteExpenseItemsByExpenseIdCommand command);
 }
