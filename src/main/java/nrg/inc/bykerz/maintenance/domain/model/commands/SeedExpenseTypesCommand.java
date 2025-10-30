@@ -1,4 +1,4 @@
 package nrg.inc.bykerz.maintenance.domain.model.commands;
 
-public record CreateServiceCommand() {
+public record SeedExpenseTypesCommand() {
 }

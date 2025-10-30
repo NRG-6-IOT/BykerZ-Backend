@@ -1,4 +1,4 @@
 package nrg.inc.bykerz.maintenance.domain.model.commands;
 
-public record DeleteServiceCommand() {
+public record CreateMaintenanceCommand() {
 }

@@ -14,7 +14,7 @@ import java.util.Date;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Service extends AuditableModel {
+public class Maintenance extends AuditableModel {
 
     @NotNull
     private String details;
