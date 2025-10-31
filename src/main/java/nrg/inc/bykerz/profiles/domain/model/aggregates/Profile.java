@@ -10,11 +10,11 @@ import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateR
 public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
     @Getter
-    @Embedded
+    @Column(name = "first_name")
     private String firstName;
 
     @Getter
-    @Embedded
+    @Column(name = "last_name")
     private String lastName;
 
     @Embedded
