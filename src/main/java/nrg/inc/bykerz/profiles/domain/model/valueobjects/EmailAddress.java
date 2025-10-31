@@ -1,4 +1,11 @@
 package nrg.inc.bykerz.profiles.domain.model.valueobjects;
 
-public record EmailAddress() {
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Email;
+
+@Embeddable
+public record EmailAddress(@Email String email) {
+    public EmailAddress() {
+        this(null);
+    }
 }
