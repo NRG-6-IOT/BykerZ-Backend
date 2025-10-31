@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 
 @Service
-public class ApplicationReadyEventHandler {
+public class ModelApplicationReadyEventHandler {
 
     private final ModelCommandService modelCommandService;
-    private static final Logger LOGGER= LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(ModelApplicationReadyEventHandler.class);
 
 
-    public ApplicationReadyEventHandler(ModelCommandService modelCommandService) {
+    public ModelApplicationReadyEventHandler(ModelCommandService modelCommandService) {
         this.modelCommandService = modelCommandService;
     }
 
