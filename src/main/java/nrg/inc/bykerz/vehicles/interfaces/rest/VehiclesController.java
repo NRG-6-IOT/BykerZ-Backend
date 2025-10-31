@@ -5,6 +5,7 @@ import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModelsQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.services.ModelQueryService;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.CreateVehicleResource;
@@ -31,10 +32,12 @@ public class VehiclesController {
 
     private final VehicleCommandService vehicleCommandService;
     private final VehicleQueryService vehicleQueryService;
+    private final ModelQueryService modelQueryService;
 
-    public VehiclesController(VehicleCommandService vehicleCommandService, VehicleQueryService vehicleQueryService) {
+    public VehiclesController(VehicleCommandService vehicleCommandService, VehicleQueryService vehicleQueryService, ModelQueryService modelQueryService) {
         this.vehicleCommandService = vehicleCommandService;
         this.vehicleQueryService = vehicleQueryService;
+        this.modelQueryService = modelQueryService;
     }
 
     @PostMapping
@@ -44,10 +47,16 @@ public class VehiclesController {
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
     public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource createVehicleResource) {
+
+        var model = modelQueryService.handle(new GetModelByIdQuery(createVehicleResource.modelId()));
+
+        if(model.isEmpty()) {
+            ResponseEntity.notFound().build();
+        }
+
         CreateVehicleCommand command = CreateVehicleCommandFromResourceAssembler.toCommandFromResource(createVehicleResource);
         var vehicle = vehicleCommandService.handle(command)
                 .orElseThrow(() -> new IllegalArgumentException("Error creating vehicle"));
-
         return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle), HttpStatus.CREATED);
     }
 
@@ -95,8 +104,6 @@ public class VehiclesController {
         }
 
         return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(newVehicle.get()), HttpStatus.OK);
-
-
     }
 
 }
