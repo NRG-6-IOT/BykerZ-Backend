@@ -1,0 +1,47 @@
+package nrg.inc.bykerz.profiles.domain.model.aggregates;
+
+import jakarta.persistence.*;
+import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
+import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+
+@Entity
+public class Profile extends AuditableAbstractAggregateRoot<Profile> {
+
+    @Embedded
+    private String firstName;
+
+    @Embedded
+    private String lastName;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address", column = @Column(name = "email_address"))})
+    private EmailAddress emailAddress;
+
+    public Profile(String firstName, String lastName, String emailAddress) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = new EmailAddress(emailAddress);
+    }
+
+    public Profile() {}
+
+    public Profile(CreateProfileCommand command) {
+        this.firstName = command.firstName();
+        this.lastName = command.lastName();
+        this.emailAddress = new EmailAddress(command.email());
+    }
+
+    public String getEmailAddress() {
+        return emailAddress.email();
+    }
+
+    public void updateName(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public void updateEmail(String email) {
+        this.emailAddress = new EmailAddress(email);
+    }
+}
