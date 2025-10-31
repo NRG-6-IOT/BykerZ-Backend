@@ -394,9 +394,9 @@ public class ModelCommandServiceImpl implements ModelCommandService {
         };
 
         Arrays.stream(commands).forEach(element -> {
-                if (modelRepository.existsByName(element.name()))
+                if (!modelRepository.existsByName(element.name()))
                 {
-
+                    modelRepository.save(new Model(element));
                 }
         });
     }
