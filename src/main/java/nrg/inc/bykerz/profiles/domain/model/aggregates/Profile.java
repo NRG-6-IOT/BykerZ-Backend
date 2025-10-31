@@ -1,6 +1,7 @@
 package nrg.inc.bykerz.profiles.domain.model.aggregates;
 
 import jakarta.persistence.*;
+import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
