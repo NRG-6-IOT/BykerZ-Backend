@@ -1,6 +1,7 @@
 package nrg.inc.bykerz.profiles.domain.model.aggregates;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -8,9 +9,11 @@ import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateR
 @Entity
 public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
+    @Getter
     @Embedded
     private String firstName;
 
+    @Getter
     @Embedded
     private String lastName;
 
