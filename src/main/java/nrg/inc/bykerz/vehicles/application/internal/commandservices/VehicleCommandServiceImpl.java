@@ -2,6 +2,7 @@ package nrg.inc.bykerz.vehicles.application.internal.commandservices;
 
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
+import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
@@ -53,6 +54,15 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
             return Optional.of(updatedVehicle);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error updating vehicle: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void handle(DeleteVehicleCommand command) {
+        if (vehicleRepository.existsById(command.id())) {
+            vehicleRepository.deleteById(command.id());
+        } else  {
+            throw new IllegalArgumentException("Cannot find vehicle with id: " + command.id());
         }
     }
 }
