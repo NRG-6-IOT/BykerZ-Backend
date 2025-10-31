@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.profiles.application.internal.commandservices;
+package nrg.inc.bykerz.profiles.application.internal.queryservices;
 
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
 import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByEmailQuery;
