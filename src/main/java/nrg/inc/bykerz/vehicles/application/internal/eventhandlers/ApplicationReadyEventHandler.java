@@ -1,5 +1,6 @@
 package nrg.inc.bykerz.vehicles.application.internal.eventhandlers;
 
+import nrg.inc.bykerz.vehicles.domain.model.commands.SeedModelsCommand;
 import nrg.inc.bykerz.vehicles.domain.services.ModelCommandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,8 @@ public class ApplicationReadyEventHandler {
     public void onApplicationReady(ApplicationReadyEvent event) {
         var applicationName= event.getApplicationContext().getId();
         LOGGER.info("Starting Model Seeding for {} at {}", applicationName,currentTimestamp());
-
-
-
+        var seedModelsCommand = new SeedModelsCommand();
+        modelCommandService.handle(seedModelsCommand);
         LOGGER.info("Models seeded successfully for application: {} at {}", applicationName, currentTimestamp());
     }
 
