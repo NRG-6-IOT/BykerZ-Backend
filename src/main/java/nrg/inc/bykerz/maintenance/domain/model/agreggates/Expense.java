@@ -33,6 +33,14 @@ public class Expense extends AuditableAbstractAggregateRoot<Expense> {
     @JoinColumn(name = "expense_type_id")
     private ExpenseType expenseType;
 
+    public Expense(String name, Double finalPrice, User user, ExpenseType expenseType) {
+        this.name = name;
+        this.finalPrice = finalPrice;
+        this.user = user;
+        this.expenseType = expenseType;
+        this.expenseItems = new ArrayList<>();
+    }
+
 
 
 }

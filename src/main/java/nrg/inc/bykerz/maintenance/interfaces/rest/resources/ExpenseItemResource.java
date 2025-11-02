@@ -1,7 +1,7 @@
-package nrg.inc.bykerz.maintenance.domain.model.commands;
+package nrg.inc.bykerz.maintenance.interfaces.rest.resources;
 
-public record AddExpenseItemCommand(
-        Long expenseId,
+public record ExpenseItemResource(
+        Long id,
         String name,
         Integer amount,
         Double unitPrice,

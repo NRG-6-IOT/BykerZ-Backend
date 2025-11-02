@@ -34,4 +34,13 @@ public class ExpenseItem extends AuditableModel {
     @JoinColumn(name = "item_type_id")
     private ItemType itemType;
 
+    public ExpenseItem(String name, Integer amount, Double unitPrice, Double totalPrice, Expense expense, ItemType itemType) {
+        this.name = name;
+        this.amount = amount;
+        this.unitPrice = unitPrice;
+        this.totalPrice = totalPrice;
+        this.expense = expense;
+        this.itemType = itemType;
+    }
+
 }
