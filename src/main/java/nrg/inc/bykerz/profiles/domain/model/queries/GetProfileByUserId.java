@@ -1,4 +1,4 @@
 package nrg.inc.bykerz.profiles.domain.model.queries;
 
-public record GetProfileByUserId() {
+public record GetProfileByUserId(Long userId) {
 }
