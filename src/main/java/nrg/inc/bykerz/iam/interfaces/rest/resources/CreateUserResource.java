@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.rest.resources;
+package nrg.inc.bykerz.iam.interfaces.rest.resources;
 
 import nrg.inc.bykerz.iam.domain.model.entities.Role;
 
