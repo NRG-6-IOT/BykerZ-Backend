@@ -1,4 +1,4 @@
 package nrg.inc.bykerz.maintenance.domain.model.queries;
 
-public record GetAllMaintenancesByUserIdQuery() {
+public record GetAllMaintenancesByUserIdQuery(Long userId) {
 }

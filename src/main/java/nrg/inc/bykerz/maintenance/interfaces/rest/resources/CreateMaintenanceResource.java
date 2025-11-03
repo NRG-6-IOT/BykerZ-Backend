@@ -1,8 +1,8 @@
-package nrg.inc.bykerz.maintenance.domain.model.commands;
+package nrg.inc.bykerz.maintenance.interfaces.rest.resources;
 
 import java.util.Date;
 
-public record CreateMaintenanceCommand(
+public record CreateMaintenanceResource(
         String details,
         Long vehicleId,
         Date dateOfService,
