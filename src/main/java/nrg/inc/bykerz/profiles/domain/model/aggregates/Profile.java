@@ -47,6 +47,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
         this.firstName = command.firstName();
         this.lastName = command.lastName();
         this.emailAddress = new EmailAddress(command.email());
+        this.userId = new UserId(command.userId());
     }
 
     public String getEmailAddress() {
