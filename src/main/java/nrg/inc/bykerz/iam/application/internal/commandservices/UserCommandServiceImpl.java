@@ -20,12 +20,29 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final HashingService hashingService;
     private final TokenService tokenService;
 
+    /**
+     * User Command Service Implementation
+     * <p>
+     *     This class implements the {@link UserCommandService} interface to handle user-related commands such as {@link SignInCommand}, {@link SignUpCommand} and {@link UpdateUserCommand}.
+     * </p>
+     */
     public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, HashingService hashingService, TokenService tokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
     }
+
+    /**
+     * Handle update user command
+     * <p>
+     *     This method handles the {@link UpdateUserCommand} command to update an existing user's details.
+     * </p>
+     * @param updateUserCommand the command containing the updated user details
+     * @param userId the ID of the user to be updated
+     * @return an optional containing the updated user
+     * @throws IllegalArgumentException if the user with the given ID is not found or if the username is already taken by another user
+     */
 
     @Override
     public Optional<User> handle(UpdateUserCommand updateUserCommand, Long userId) {
@@ -34,7 +51,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new IllegalArgumentException("User with ID " + userId + " not found");
         }
 
-        //Check if a user with the same email already exists
         var existingUserWithEmail = userRepository.findByUsername(updateUserCommand.username());
         if (existingUserWithEmail.isPresent() && !existingUserWithEmail.get().getId().equals(userId)) {
             throw new IllegalArgumentException("User with username " + updateUserCommand.username() + " already exists");
@@ -42,16 +58,13 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         var userToUpdate = userOptional.get();
 
-        // ✅ Aquí cifras la contraseña SOLO si no viene vacía
         String encodedPassword = updateUserCommand.password();
         if (encodedPassword != null && !encodedPassword.isBlank()) {
             encodedPassword = hashingService.encode(encodedPassword);
         } else {
-            // Si viene vacía, mantén la actual
             encodedPassword = userToUpdate.getPassword();
         }
 
-        // ✅ Crea un nuevo comando con la contraseña cifrada
         var commandWithEncodedPassword = new UpdateUserCommand(
                 updateUserCommand.username(),
                 encodedPassword
@@ -60,12 +73,16 @@ public class UserCommandServiceImpl implements UserCommandService {
         try{
             var updatedUser= userRepository.save(userToUpdate.updateUserDetails(commandWithEncodedPassword));
             return Optional.of(updatedUser);
-        }catch (Exception e) {
-            // Handle exception, e.g., log it or rethrow as a custom exception
-            return Optional.empty();
-        }
+        }catch (Exception e) { return Optional.empty(); }
     }
 
+    /**
+     * Handle delete user command
+     * <p>
+     *     This method handles the {@link DeleteUserCommand} command to delete an existing user.
+     * </p>
+     * @param deleteUserCommand the command containing the ID of the user to be deleted
+     */
     @Override
     public void handle(DeleteUserCommand deleteUserCommand) {
         if (!userRepository.existsById(deleteUserCommand.userId())) {
@@ -75,11 +92,19 @@ public class UserCommandServiceImpl implements UserCommandService {
         try{
             userRepository.deleteById(deleteUserCommand.userId());
         } catch (Exception e) {
-            // Handle exception, e.g., log it or rethrow as a custom exception
             throw new RuntimeException("Error deleting user: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Handle sign-in command
+     * <p>
+     *     This method handles the {@link SignInCommand} command to authenticate a user and generate a token.
+     * </p>
+     * @param signInCommand the command containing the user's credentials
+     * @return an optional containing a pair of the authenticated user and the generated token
+     * @throws IllegalArgumentException if the user with the given username is not found or if the password is invalid
+     */
     @Override
     public Optional<ImmutablePair<User, String>> handle(SignInCommand signInCommand) {
         var user = userRepository.findByUsername(signInCommand.username());
@@ -94,6 +119,15 @@ public class UserCommandServiceImpl implements UserCommandService {
         return Optional.of(ImmutablePair.of(user.get(), token));
     }
 
+    /**
+     * Handle sign-up command
+     * <p>
+     *     This method handles the {@link SignUpCommand} command to register a new user.
+     * </p>
+     * @param signUpCommand the command containing the new user's details
+     * @return an optional containing the newly created user
+     * @throws IllegalArgumentException if the username is already taken or if any of the specified roles are not found
+     */
     @Override
     public Optional<User> handle(SignUpCommand signUpCommand) {
         if (userRepository.existsByUsername(signUpCommand.username())) {

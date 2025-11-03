@@ -26,26 +26,16 @@ public class User extends AuditableAbstractAggregateRoot <User>{
     )
     private Set<Role> userRoles;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_vehicles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "vehicle_id")
-    )
-    private Set<Vehicle> user_vehicles;
-
 
     protected User(){
         super();
         this.userRoles = new HashSet<>();
-        this.user_vehicles = new HashSet<>();
     }
 
     public User(String username, String password){
         this.username = username;
         this.password = password;
         this.userRoles = new HashSet<>();
-        this.user_vehicles = new HashSet<>();
     }
 
     public User(String username, String password, List<Role> roles) {
