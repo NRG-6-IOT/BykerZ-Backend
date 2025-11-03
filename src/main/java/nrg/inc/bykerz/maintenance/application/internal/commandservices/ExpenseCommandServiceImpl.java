@@ -7,7 +7,6 @@ import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteExpenseCommand;
 import nrg.inc.bykerz.maintenance.domain.model.entities.ExpenseType;
 import nrg.inc.bykerz.maintenance.domain.model.valueobjects.ExpenseTypes;
 import nrg.inc.bykerz.maintenance.domain.services.ExpenseCommandService;
-import nrg.inc.bykerz.maintenance.infrastructure.persistence.jpa.repositories.ExpenseItemRepository;
 import nrg.inc.bykerz.maintenance.infrastructure.persistence.jpa.repositories.ExpenseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +17,10 @@ import java.util.Optional;
 public class ExpenseCommandServiceImpl implements ExpenseCommandService {
 
     private final ExpenseRepository expenseRepository;
-    private final ExpenseItemRepository expenseItemRepository;
     private final UserRepository userRepository;
 
-    public ExpenseCommandServiceImpl(ExpenseRepository expenseRepository, ExpenseItemRepository expenseItemRepository, UserRepository userRepository) {
+    public ExpenseCommandServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
-        this.expenseItemRepository = expenseItemRepository;
         this.userRepository = userRepository;
     }
 
@@ -32,6 +29,10 @@ public class ExpenseCommandServiceImpl implements ExpenseCommandService {
     public Optional<Expense> handle(CreateExpenseCommand command) {
 
         var user = userRepository.findById(command.userId());
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("User with id " + command.userId() + " not found");
+        }
 
         var expense = new Expense(
                 command.name(),
@@ -58,7 +59,6 @@ public class ExpenseCommandServiceImpl implements ExpenseCommandService {
         }
 
         try {
-            expenseItemRepository.deleteExpenseItemsByExpense_Id(command.expenseId());
             expenseRepository.delete(expense.get());
         }catch (Exception e) {
             throw new IllegalArgumentException("Error while deleting expense: " + e.getMessage());

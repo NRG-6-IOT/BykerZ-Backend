@@ -12,7 +12,7 @@ public class MaintenanceResourceFromEntityAssembler {
                 entity.getDateOfService().toString(),
                 entity.getLocation(),
                 entity.getDescription(),
-                entity.getState().toString(),
+                entity.getState().getName().toString(),
                 entity.getMaintenanceExpense() != null ?
                         ExpenseResourceFromEntityAssembler.toResourceFromEntity(entity.getMaintenanceExpense())
                         : null

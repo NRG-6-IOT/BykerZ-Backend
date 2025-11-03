@@ -2,12 +2,11 @@ package nrg.inc.bykerz.maintenance.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nrg.inc.bykerz.iam.domain.model.queries.GetUserByUsernameQuery;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.maintenance.domain.model.commands.AssignExpenseToMaintenanceCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteMaintenanceCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.UpdateStateOfMaintenanceByIdCommand;
-import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByUserIdQuery;
+import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByVehicleIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetMaintenanceByIdQuery;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceCommandService;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceQueryService;
@@ -17,8 +16,6 @@ import nrg.inc.bykerz.maintenance.interfaces.rest.resources.UpdateStatusOfMainte
 import nrg.inc.bykerz.maintenance.interfaces.rest.transform.CreateMaintenanceCommandFromResourceAssembler;
 import nrg.inc.bykerz.maintenance.interfaces.rest.transform.MaintenanceResourceFromEntityAssembler;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,16 +48,11 @@ public class MaintenanceController {
         return ResponseEntity.ok(maintenanceResource);
     }
 
-    @GetMapping
-    @Operation(summary = "Get Maintenances By User Id", description = "Get all the maintenances of a user by its id" )
-    public ResponseEntity<List<MaintenanceResource>> getMaintenancesByUserId(@AuthenticationPrincipal UserDetails userDetails){
-        String username = userDetails.getUsername();
-        var getUserByUsernameQuery = new GetUserByUsernameQuery(username);
-        var user = userQueryService.handle(getUserByUsernameQuery);
-        if (user.isEmpty()) {return ResponseEntity.notFound().build();}
-        var userId = user.get().getId();
+    @GetMapping("/vehicle/{vehicleId}")
+    @Operation(summary = "Get Maintenances By Vehicle Id", description = "Get all the maintenances of a vehicle by its id" )
+    public ResponseEntity<List<MaintenanceResource>> getMaintenancesByUserId(@PathVariable Long vehicleId){
 
-        var maintenancesList = maintenanceQueryService.handle(new GetAllMaintenancesByUserIdQuery(userId));
+        var maintenancesList = maintenanceQueryService.handle(new GetAllMaintenancesByVehicleIdQuery(vehicleId));
 
         var maintenancesResources = maintenancesList.stream()
                 .map(MaintenanceResourceFromEntityAssembler::toResourceFromEntity)
