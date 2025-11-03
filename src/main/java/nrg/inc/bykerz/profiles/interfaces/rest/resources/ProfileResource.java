@@ -4,6 +4,7 @@ public record ProfileResource(
         Long id,
         String firstName,
         String lastName,
-        String email
+        String email,
+        Long userId
 ) {
 }
