@@ -4,6 +4,7 @@ import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByPlateQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
 import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class VehiclesQueryServiceImpl implements VehiclesQueryService {
 
     @Override
     public Optional<Vehicle> handle(GetVehicleByPlateQuery query) {
-        return vehicleRepository.findByPlate(query.plate());
+        return vehicleRepository.findByPlate(new Plate(query.plate()));
     }
 
     @Override

@@ -4,6 +4,7 @@ import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
+import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.ModelRepository;
@@ -28,7 +29,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         var model = modelRepository.findById(command.modelId());
 
         if (model.isEmpty()) throw new IllegalArgumentException("Cannot find model with id: " + command.modelId());
-        if (vehicleRepository.existsByPlate(command.plate())) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
+        if (vehicleRepository.existsByPlate(new Plate(command.plate()))) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
 
         try {
             var vehicle = new Vehicle(command.ownerId(), model.get(), command.year(), command.plate());
@@ -43,7 +44,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     public Optional<Vehicle> handle(UpdateVehicleCommand command) {
         var vehicle = vehicleRepository.findById(command.id());
         if (vehicle.isEmpty()) throw new IllegalArgumentException("Cannot find vehicle with id: " + command.id());
-        if (Objects.equals(vehicle.get().getPlate(), command.plate()) && vehicleRepository.existsByPlate(command.plate())) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
+        if (Objects.equals(vehicle.get().getPlate(), command.plate()) && vehicleRepository.existsByPlate(new Plate(command.plate()))) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
         var updatedVehicle = vehicle.get().UpdateVehicle(command);
 
         try {

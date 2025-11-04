@@ -5,6 +5,7 @@ import lombok.Getter;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
+import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
 
 @Getter
 @Entity
@@ -17,7 +18,9 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
     private Model model;
 
     private String year;
-    private String plate;
+
+    @Embedded
+    private Plate plate;
 
     protected Vehicle() {
         super();
@@ -27,11 +30,11 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.ownerId = ownerId;
         this.model = model;
         this.year = year;
-        this.plate = plate;
+        this.plate = new Plate(plate);
     }
 
     public Vehicle UpdateVehicle(UpdateVehicleCommand command) {
-        this.plate = command.plate();
+        this.plate = new Plate(command.plate());
         return this;
     }
 
