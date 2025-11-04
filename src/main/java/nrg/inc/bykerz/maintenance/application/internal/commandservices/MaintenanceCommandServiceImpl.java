@@ -9,7 +9,7 @@ import nrg.inc.bykerz.maintenance.domain.model.valueobjects.MaintenanceStates;
 import nrg.inc.bykerz.maintenance.domain.services.ExpenseQueryService;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceCommandService;
 import nrg.inc.bykerz.maintenance.infrastructure.persistence.jpa.repositories.MaintenanceRepository;
-import nrg.inc.bykerz.vehicle.infrastructure.persistence.jpa.repositories.VehicleRepository;
+import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
