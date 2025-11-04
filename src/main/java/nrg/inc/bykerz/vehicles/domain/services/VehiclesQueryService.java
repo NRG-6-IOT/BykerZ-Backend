@@ -6,7 +6,7 @@ import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 
 import java.util.Optional;
 
-public interface VehicleQueryService {
+public interface VehiclesQueryService {
 
     Optional<Vehicle> handle(GetVehicleByIdQuery query);
 
