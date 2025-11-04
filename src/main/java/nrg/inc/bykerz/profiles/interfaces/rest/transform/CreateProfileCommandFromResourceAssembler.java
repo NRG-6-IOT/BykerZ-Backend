@@ -8,7 +8,8 @@ public class CreateProfileCommandFromResourceAssembler {
         return new CreateProfileCommand(
                 resource.firstName(),
                 resource.lastName(),
-                resource.email()
+                resource.email(),
+                resource.userId()
         );
     }
 }

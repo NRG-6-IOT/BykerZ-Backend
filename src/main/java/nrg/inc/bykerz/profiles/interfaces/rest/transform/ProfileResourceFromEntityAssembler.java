@@ -9,7 +9,8 @@ public class ProfileResourceFromEntityAssembler {
                 entity.getId(),
                 entity.getFirstName(),
                 entity.getLastName(),
-                entity.getEmailAddress()
+                entity.getEmailAddress(),
+                entity.getUserId()
         );
     }
 }

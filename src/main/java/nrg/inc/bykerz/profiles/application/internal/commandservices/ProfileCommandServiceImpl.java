@@ -3,6 +3,7 @@ package nrg.inc.bykerz.profiles.application.internal.commandservices;
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
 import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
+import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         var emailAddress = new EmailAddress(command.email());
         if (profileRepository.existsByEmailAddress(emailAddress)) {
             throw new IllegalArgumentException("Profile with email address already exists.");
+        }
+        var userId = new UserId(command.userId());
+        if (profileRepository.findByUserId(userId).isPresent()) {
+            throw new IllegalArgumentException("Profile for user ID already exists.");
         }
         var profile = new Profile(command);
         profileRepository.save(profile);

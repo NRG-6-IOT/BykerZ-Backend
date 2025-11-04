@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
+import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
 @Entity
@@ -22,18 +23,31 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
             @AttributeOverride(name = "address", column = @Column(name = "email_address"))})
     private EmailAddress emailAddress;
 
-    public Profile(String firstName, String lastName, String emailAddress) {
+    @Embedded
+    private UserId userId;
+
+    public Profile(String firstName, String lastName, String emailAddress, Long profileId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = new EmailAddress(emailAddress);
+        this.userId = new UserId(profileId);
     }
 
-    public Profile() {}
+    public Profile() {
+        super();
+        this.emailAddress = new EmailAddress();
+    }
+
+    public Profile(UserId userId) {
+        this();
+        this.userId = userId;
+    }
 
     public Profile(CreateProfileCommand command) {
         this.firstName = command.firstName();
         this.lastName = command.lastName();
         this.emailAddress = new EmailAddress(command.email());
+        this.userId = new UserId(command.userId());
     }
 
     public String getEmailAddress() {
@@ -48,4 +62,6 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     public void updateEmail(String email) {
         this.emailAddress = new EmailAddress(email);
     }
+
+    public Long getUserId() { return this.userId.userId(); }
 }
