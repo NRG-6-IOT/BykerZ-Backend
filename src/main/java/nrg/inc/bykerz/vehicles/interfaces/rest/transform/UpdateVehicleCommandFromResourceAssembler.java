@@ -7,7 +7,6 @@ public class UpdateVehicleCommandFromResourceAssembler {
     public static UpdateVehicleCommand toCommandFromResource(UpdateVehicleResource resource, Long vehicleId) {
         return new UpdateVehicleCommand(
                 vehicleId,
-                resource.mechanicId(),
                 resource.plate()
         );
     }

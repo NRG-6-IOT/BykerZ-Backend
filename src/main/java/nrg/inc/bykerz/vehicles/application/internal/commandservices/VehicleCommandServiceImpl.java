@@ -34,7 +34,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         if (vehicleRepository.existsByPlate(command.plate())) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
 
         try {
-            var vehicle = new Vehicle(command.ownerId(), command.mechanicId(), model.get(), command.year(), command.plate());
+            var vehicle = new Vehicle(command.ownerId(), model.get(), command.year(), command.plate());
             vehicleRepository.save(vehicle);
             return Optional.of(vehicle);
         } catch (Exception e) {

@@ -14,7 +14,6 @@ import java.util.Date;
 public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
 
     private Long ownerId;
-    private Long mechanicId;
 
     @ManyToOne
     @JoinColumn(name = "model_id")
@@ -27,18 +26,15 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         super();
     }
 
-    public Vehicle(Long ownerId, Long mechanicId, Model model, String year, String plate) {
+    public Vehicle(Long ownerId, Model model, String year, String plate) {
         this.ownerId = ownerId;
-        this.mechanicId = mechanicId;
         this.model = model;
         this.year = year;
         this.plate = plate;
     }
 
     public Vehicle UpdateVehicle(UpdateVehicleCommand command) {
-        this.mechanicId = command.mechanicId();
         this.plate = command.plate();
-
         return this;
     }
 

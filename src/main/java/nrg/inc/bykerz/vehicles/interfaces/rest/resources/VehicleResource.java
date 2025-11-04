@@ -5,7 +5,6 @@ import java.util.Date;
 public record VehicleResource(
         Long id,
         Long ownerId,
-        Long mechanicId,
         ModelResource model,
         String year,
         String plate
