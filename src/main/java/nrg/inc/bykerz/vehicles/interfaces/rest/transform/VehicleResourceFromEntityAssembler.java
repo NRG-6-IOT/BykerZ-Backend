@@ -1,7 +1,6 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest.transform;
 
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
-import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.ModelResource;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
 

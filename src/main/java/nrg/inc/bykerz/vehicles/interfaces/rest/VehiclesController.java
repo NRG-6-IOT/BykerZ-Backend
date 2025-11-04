@@ -85,9 +85,6 @@ public class VehiclesController {
 
     @PutMapping("/{vehicleId}")
     @Operation(summary = "Updates vehicle data by id")
-    @ApiResponses({
-
-    })
     public ResponseEntity<VehicleResource> updateVehicle(@PathVariable Long vehicleId, @RequestBody UpdateVehicleResource resource) {
         var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicle.isEmpty()) {

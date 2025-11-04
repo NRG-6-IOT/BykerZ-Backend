@@ -4,13 +4,10 @@ import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
-import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.ModelRepository;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.Objects;
 import java.util.Optional;
