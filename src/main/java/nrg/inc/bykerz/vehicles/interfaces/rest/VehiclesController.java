@@ -6,6 +6,7 @@ import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByPlateQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.ModelQueryService;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
@@ -97,6 +98,17 @@ public class VehiclesController {
                         .map(VehicleResourceFromEntityAssembler::toResourceFromEntity)
                         .toList()
         );
+    }
+
+    @GetMapping("/plate/{plate}")
+    @Operation(summary = "Get vehicle by plate")
+    public ResponseEntity<VehicleResource> getVehicleByPlate(@PathVariable String plate) {
+        var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByPlateQuery(plate));
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
+        return ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle));
     }
 
     @DeleteMapping("/{vehicleId}")
