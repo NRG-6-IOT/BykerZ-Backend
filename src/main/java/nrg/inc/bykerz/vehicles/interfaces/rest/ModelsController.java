@@ -1,7 +1,9 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest;
 
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllBrandsQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModelsQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelsByBrandQuery;
 import nrg.inc.bykerz.vehicles.domain.services.ModelQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.ModelResource;
 import nrg.inc.bykerz.vehicles.interfaces.rest.transform.ModelResourceFromEntityAssembler;
@@ -27,10 +29,6 @@ public class ModelsController {
 
     @GetMapping
     @Operation(summary = "Get all models")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Models retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No models found")
-    })
     public ResponseEntity<List<ModelResource>> getAllModels() {
         var models = modelQueryService.handle(new GetAllModelsQuery());
         var resources = models.stream()
@@ -41,13 +39,26 @@ public class ModelsController {
 
     @GetMapping("/{modelId}")
     @Operation(summary = "Get model by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Model retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Model not found")
-    })
     public ResponseEntity<ModelResource> getModelById(@PathVariable Long modelId) {
         var model = modelQueryService.handle(new GetModelByIdQuery(modelId));
         return model.map(m -> ResponseEntity.ok(ModelResourceFromEntityAssembler.toResourceFromEntity(m)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/brand/{brand}")
+    @Operation(summary = "Get models by brand")
+    public ResponseEntity<List<ModelResource>> getModelsByBrand(@PathVariable String brand) {
+        var models = modelQueryService.handle(new GetModelsByBrandQuery(brand));
+        var resources = models.stream()
+                .map(ModelResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resources);
+    }
+
+    @GetMapping("/brands")
+    @Operation(summary = "Get all distinct brands")
+    public ResponseEntity<List<String>> getAllBrands() {
+        var brands = modelQueryService.handle(new GetAllBrandsQuery());
+        return ResponseEntity.ok(brands);
     }
 }
