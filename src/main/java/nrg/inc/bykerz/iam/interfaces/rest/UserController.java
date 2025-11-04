@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.rest;
+package nrg.inc.bykerz.iam.interfaces.rest;
 
 import nrg.inc.bykerz.iam.domain.model.commands.DeleteUserCommand;
 import nrg.inc.bykerz.iam.domain.model.commands.UpdateUserCommand;
@@ -6,10 +6,10 @@ import nrg.inc.bykerz.iam.domain.model.queries.*;
 import nrg.inc.bykerz.iam.domain.services.UserCommandService;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.iam.infrastructure.authorization.sfs.model.UserDetailsImpl;
-import nrg.inc.bykerz.iam.rest.resources.UpdateUserResource;
-import nrg.inc.bykerz.iam.rest.resources.UserResource;
-import nrg.inc.bykerz.iam.rest.transform.UpdateUserCommandFromResourceAssembler;
-import nrg.inc.bykerz.iam.rest.transform.UserResourceFromEntityAssembler;
+import nrg.inc.bykerz.iam.interfaces.rest.resources.UpdateUserResource;
+import nrg.inc.bykerz.iam.interfaces.rest.resources.UserResource;
+import nrg.inc.bykerz.iam.interfaces.rest.transform.UpdateUserCommandFromResourceAssembler;
+import nrg.inc.bykerz.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
