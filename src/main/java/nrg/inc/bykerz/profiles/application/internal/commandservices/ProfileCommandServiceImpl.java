@@ -1,11 +1,11 @@
 package nrg.inc.bykerz.profiles.application.internal.commandservices;
 
-import nrg.inc.bykerz.iam.interfaces.acl.IamContextFacade;
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
 import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
 import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
+import nrg.inc.bykerz.shared.application.outboundedservices.ExternalIamService;
 import nrg.inc.bykerz.shared.domain.model.commands.CreateMechanicCommand;
 import nrg.inc.bykerz.shared.domain.services.MechanicCommandService;
 import org.springframework.stereotype.Service;
@@ -16,18 +16,18 @@ import java.util.Optional;
 public class ProfileCommandServiceImpl implements ProfileCommandService {
     private final ProfileRepository profileRepository;
     private final MechanicCommandService mechanicCommandService;
-    private final IamContextFacade iamContextFacade;
+    private final ExternalIamService externalIamService;
 
-    public ProfileCommandServiceImpl(ProfileRepository profileRepository, MechanicCommandService mechanicCommandService, IamContextFacade iamContextFacade) {
+    public ProfileCommandServiceImpl(ProfileRepository profileRepository, MechanicCommandService mechanicCommandService, ExternalIamService externalIamService) {
         this.profileRepository = profileRepository;
         this.mechanicCommandService = mechanicCommandService;
-        this.iamContextFacade = iamContextFacade;
+        this.externalIamService = externalIamService;
     }
 
     @Override
     public Optional<Profile> handle(CreateProfileCommand command) {
 
-        var user = this.iamContextFacade.fetchUserById(command.userId());
+        var user = this.externalIamService.getUserById(command.userId());
         if (user.isEmpty()) {
             throw new IllegalArgumentException("User with given ID does not exist.");
         }
