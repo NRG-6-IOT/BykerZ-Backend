@@ -6,6 +6,7 @@ import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.ModelQueryService;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
@@ -82,7 +83,20 @@ public class VehiclesController {
     @GetMapping("/owner/{ownerId}")
     @Operation(summary = "Get vehicles by owner ID")
     public ResponseEntity<List<VehicleResource>> getVehiclesByOwnerId(@PathVariable Long ownerId) {
-        throw new NotImplementedException();
+        var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
+        if (ownerOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicles = vehiclesQueryService.handle(new GetVehiclesByOwnerIdQuery(ownerId));
+        if (vehicles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok().body(
+                vehicles.stream()
+                        .map(VehicleResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList()
+        );
     }
 
     @DeleteMapping("/{vehicleId}")
