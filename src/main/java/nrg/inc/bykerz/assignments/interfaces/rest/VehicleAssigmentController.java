@@ -9,6 +9,9 @@ import nrg.inc.bykerz.assignments.interfaces.rest.resources.AssignmentResource;
 import nrg.inc.bykerz.assignments.interfaces.rest.resources.CreateAssigmentResource;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.CreateAssigmentCommandAssembler;
+import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByCodeQuery;
+import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
+import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,27 +21,35 @@ import org.springframework.web.bind.annotation.*;
 public class VehicleAssigmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final AssignmentCommandService assignmentCommandService;
+    private final MechanicQueryService mechanicQueryService;
 
-    public VehicleAssigmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService) {
+    public VehicleAssigmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService) {
         this.assignmentQueryService = assignmentQueryService;
         this.assignmentCommandService = assignmentCommandService;
+        this.mechanicQueryService = mechanicQueryService;
     }
+
 
     @PostMapping
     @Operation(summary = "Create Assignment for Vehicle", description = "Creates a new assignment for the specified vehicle and associate it to a mechanic depending of its code.")
     public ResponseEntity<AssignmentResource> createAssignment(@PathVariable Long vehicleId, @RequestBody CreateAssigmentResource resource) {
         //TO-DO: Use mechanic code to find mechanic id
         //TO-DO: Implement validation get vehicle by vehicle id
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByCodeQuery(resource.mechanicCode()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
         var command = CreateAssigmentCommandAssembler.toCommand(
                 vehicleId,
-                1L
+                mechanic.getId()
         );
         var assignmentOpt = this.assignmentCommandService.handle(command);
         if (assignmentOpt.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         var assignment = assignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment);
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -51,7 +62,12 @@ public class VehicleAssigmentController {
             return ResponseEntity.notFound().build();
         }
         var assignment = assignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment);
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanicId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
         return ResponseEntity.ok(assignmentResource);
     }
 }
