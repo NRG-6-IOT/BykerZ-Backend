@@ -1,8 +1,8 @@
-package nrg.inc.bykerz.iam.interfaces.rest.transform;
+package nrg.inc.bykerz.iam.rest.transform;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.domain.model.entities.Role;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.UserResource;
+import nrg.inc.bykerz.iam.rest.resources.UserResource;
 
 public class UserResourceFromEntityAssembler {
     public static UserResource toResourceFromEntity(User user) {

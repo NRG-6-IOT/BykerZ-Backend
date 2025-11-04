@@ -1,7 +1,7 @@
-package nrg.inc.bykerz.iam.interfaces.rest.transform;
+package nrg.inc.bykerz.iam.rest.transform;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.AuthenticatedUserResource;
+import nrg.inc.bykerz.iam.rest.resources.AuthenticatedUserResource;
 
 public class AuthenticatedUserResourceFromEntityAssembler {
     public static AuthenticatedUserResource toResourceFromEntity(User user, String token) {

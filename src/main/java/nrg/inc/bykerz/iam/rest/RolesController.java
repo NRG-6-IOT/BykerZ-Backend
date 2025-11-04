@@ -1,11 +1,11 @@
-package nrg.inc.bykerz.iam.interfaces.rest;
+package nrg.inc.bykerz.iam.rest;
 
 import nrg.inc.bykerz.iam.domain.model.entities.Role;
 import nrg.inc.bykerz.iam.domain.model.queries.GetAllRolesQuery;
 import nrg.inc.bykerz.iam.domain.services.RoleCommandService;
 import nrg.inc.bykerz.iam.domain.services.RoleQueryService;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.RoleResource;
-import nrg.inc.bykerz.iam.interfaces.rest.transform.RoleResourceFromEntityAssembler;
+import nrg.inc.bykerz.iam.rest.resources.RoleResource;
+import nrg.inc.bykerz.iam.rest.transform.RoleResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

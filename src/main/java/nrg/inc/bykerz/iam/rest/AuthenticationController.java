@@ -1,14 +1,14 @@
-package nrg.inc.bykerz.iam.interfaces.rest;
+package nrg.inc.bykerz.iam.rest;
 
 import nrg.inc.bykerz.iam.domain.services.UserCommandService;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.AuthenticatedUserResource;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.SignInResource;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.SignUpResource;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.UserResource;
-import nrg.inc.bykerz.iam.interfaces.rest.transform.AuthenticatedUserResourceFromEntityAssembler;
-import nrg.inc.bykerz.iam.interfaces.rest.transform.SignInCommandFromResourceAssembler;
-import nrg.inc.bykerz.iam.interfaces.rest.transform.SignUpCommandFromResourceAssembler;
-import nrg.inc.bykerz.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
+import nrg.inc.bykerz.iam.rest.resources.AuthenticatedUserResource;
+import nrg.inc.bykerz.iam.rest.resources.SignInResource;
+import nrg.inc.bykerz.iam.rest.resources.SignUpResource;
+import nrg.inc.bykerz.iam.rest.resources.UserResource;
+import nrg.inc.bykerz.iam.rest.transform.AuthenticatedUserResourceFromEntityAssembler;
+import nrg.inc.bykerz.iam.rest.transform.SignInCommandFromResourceAssembler;
+import nrg.inc.bykerz.iam.rest.transform.SignUpCommandFromResourceAssembler;
+import nrg.inc.bykerz.iam.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
