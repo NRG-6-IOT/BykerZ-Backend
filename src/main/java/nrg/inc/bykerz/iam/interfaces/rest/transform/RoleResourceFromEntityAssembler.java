@@ -1,7 +1,7 @@
-package nrg.inc.bykerz.iam.rest.transform;
+package nrg.inc.bykerz.iam.interfaces.rest.transform;
 
 import nrg.inc.bykerz.iam.domain.model.entities.Role;
-import nrg.inc.bykerz.iam.rest.resources.RoleResource;
+import nrg.inc.bykerz.iam.interfaces.rest.resources.RoleResource;
 
 public class RoleResourceFromEntityAssembler {
     public static RoleResource toResourceFromEntity(Role roleEntity) {

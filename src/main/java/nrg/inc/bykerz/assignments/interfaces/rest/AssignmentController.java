@@ -2,9 +2,7 @@ package nrg.inc.bykerz.assignments.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nrg.inc.bykerz.assignments.domain.model.commands.UpdateAssignmentStatusCommand;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
-import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentStatus;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentCommandService;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
 import nrg.inc.bykerz.assignments.interfaces.rest.resources.AssignmentResource;
@@ -13,8 +11,12 @@ import nrg.inc.bykerz.assignments.interfaces.rest.resources.UpdateAssignmentType
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentStatusCommandFromResourceAssembler;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentTypeCommandFromResourceAssembler;
+import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
+import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping(value = "/api/v1/assignments")
@@ -22,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class AssignmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final AssignmentCommandService assignmentCommandService;
-    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService) {
+    private final MechanicQueryService mechanicQueryService;
+    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService) {
         this.assignmentQueryService = assignmentQueryService;
         this.assignmentCommandService = assignmentCommandService;
+        this.mechanicQueryService = mechanicQueryService;
     }
 
     @PatchMapping("{assignmentId}/status")
@@ -40,7 +44,13 @@ public class AssignmentController {
             return ResponseEntity.badRequest().build();
         }
         var updatedAssignment = updatedAssignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment);
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanicId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -57,7 +67,14 @@ public class AssignmentController {
             return ResponseEntity.badRequest().build();
         }
         var updatedAssignment = updatedAssignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment);
+
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanicId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -69,7 +86,14 @@ public class AssignmentController {
             return ResponseEntity.notFound().build();
         }
         var assignment = assignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment);
+
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanicId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
         return ResponseEntity.ok(assignmentResource);
     }
 }

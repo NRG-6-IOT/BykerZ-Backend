@@ -10,6 +10,8 @@ import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateR
 @Entity
 public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
+    private Long userId;
+
     @Getter
     @Column(name = "first_name")
     private String firstName;
@@ -44,6 +46,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     }
 
     public Profile(CreateProfileCommand command) {
+        this.userId = command.userId();
         this.firstName = command.firstName();
         this.lastName = command.lastName();
         this.emailAddress = new EmailAddress(command.email());
