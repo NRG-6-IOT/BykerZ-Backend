@@ -5,9 +5,9 @@ import nrg.inc.bykerz.vehicles.interfaces.rest.resources.CreateVehicleResource;
 
 public class CreateVehicleCommandFromResourceAssembler {
 
-    public static CreateVehicleCommand toCommandFromResource(CreateVehicleResource resource) {
+    public static CreateVehicleCommand toCommandFromResource(CreateVehicleResource resource, Long ownerId) {
         return new CreateVehicleCommand(
-                resource.ownerId(),
+                ownerId,
                 resource.modelId(),
                 resource.year(),
                 resource.plate()
