@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.interfaces.rest.resources;
+package nrg.inc.bykerz.iam.rest.resources;
 
 public record SignInResource(
         String username,

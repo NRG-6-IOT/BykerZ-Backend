@@ -6,8 +6,6 @@ import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentsByMechanicI
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
 import nrg.inc.bykerz.assignments.interfaces.rest.resources.AssignmentResource;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
-import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
-import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,32 +19,24 @@ import java.util.List;
 @Tag(name= "Assignments", description = "Assignment Management API")
 public class MechanicAssigmentController {
     private final AssignmentQueryService assignmentQueryService;
-    private final MechanicQueryService mechanicQueryService;
 
-    public MechanicAssigmentController(AssignmentQueryService assignmentQueryService, MechanicQueryService mechanicQueryService) {
+    public MechanicAssigmentController(AssignmentQueryService assignmentQueryService) {
         this.assignmentQueryService = assignmentQueryService;
-        this.mechanicQueryService = mechanicQueryService;
     }
 
     @GetMapping
     @Operation(summary = "Get Assignments for Mechanic", description = "Get all assignments associated to the specified mechanic.")
     public ResponseEntity<List<AssignmentResource>> getAssignments(@PathVariable Long mechanicId) {
-        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(mechanicId));
-        if (mechanicOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        var mechanic = mechanicOpt.get();
-
+        //TO-DO: Implement validation get mechanic by mechanic id
         var assignments = this.assignmentQueryService.handle(
                 new GetAssignmentsByMechanicIdQuery(mechanicId)
         );
         if(assignments.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        var assignmentResources = assignments.stream()
-                .map(a -> AssignmentResourceFromEntityAssembler.toResourceFromEntity(a, mechanic))
-                .toList();
-
+        var assignmentResources = assignments.stream().map(
+                AssignmentResourceFromEntityAssembler::toResourceFromEntity
+        ).toList();
         return ResponseEntity.ok(assignmentResources);
     }
 }

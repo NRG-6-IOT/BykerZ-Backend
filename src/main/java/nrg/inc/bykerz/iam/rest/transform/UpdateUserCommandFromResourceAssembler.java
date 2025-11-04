@@ -1,7 +1,7 @@
-package nrg.inc.bykerz.iam.interfaces.rest.transform;
+package nrg.inc.bykerz.iam.rest.transform;
 
 import nrg.inc.bykerz.iam.domain.model.commands.UpdateUserCommand;
-import nrg.inc.bykerz.iam.interfaces.rest.resources.UpdateUserResource;
+import nrg.inc.bykerz.iam.rest.resources.UpdateUserResource;
 
 public class UpdateUserCommandFromResourceAssembler {
     public static UpdateUserCommand toCommandFromResource(UpdateUserResource updateUserResource){
