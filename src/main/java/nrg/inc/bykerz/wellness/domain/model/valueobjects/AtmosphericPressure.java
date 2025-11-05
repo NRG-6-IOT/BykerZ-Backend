@@ -1,5 +1,8 @@
 package nrg.inc.bykerz.wellness.domain.model.valueobjects;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public record AtmosphericPressure(Float pressureHpa) {
     public AtmosphericPressure {
         if (pressureHpa == null || pressureHpa < 300.0f || pressureHpa > 1100.0f) {

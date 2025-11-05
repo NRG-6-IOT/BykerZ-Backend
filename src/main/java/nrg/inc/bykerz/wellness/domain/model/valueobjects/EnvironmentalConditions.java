@@ -1,5 +1,8 @@
 package nrg.inc.bykerz.wellness.domain.model.valueobjects;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public record EnvironmentalConditions(Float temperatureCelsius, Float humidityPercentage) {
     public EnvironmentalConditions{
         if (temperatureCelsius < -50 || temperatureCelsius > 60) {

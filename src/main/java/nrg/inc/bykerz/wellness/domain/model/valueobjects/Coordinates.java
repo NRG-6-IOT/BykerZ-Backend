@@ -1,7 +1,8 @@
 package nrg.inc.bykerz.wellness.domain.model.valueobjects;
 
-import java.io.Serializable;
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public record Coordinates(Float latitude, Float longitude) {
     public Coordinates {
         if (latitude == null || longitude == null) {

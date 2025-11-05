@@ -4,9 +4,9 @@ import nrg.inc.bykerz.wellness.domain.model.commands.UpdateWellnessMetricCommand
 import nrg.inc.bykerz.wellness.interfaces.rest.resources.UpdateWellnessMetricResource;
 
 public class UpdateWellnessMetricCommandFromResourceAssembler {
-    public static UpdateWellnessMetricCommand toCommandFromResource(UpdateWellnessMetricResource resource){
+    public static UpdateWellnessMetricCommand toCommandFromResource(UpdateWellnessMetricResource resource, Long wellnessMetricId) {
         return new UpdateWellnessMetricCommand(
-                resource.wellnessMetricId(),
+                wellnessMetricId,
 
                 resource.latitude(),
                 resource.longitude(),

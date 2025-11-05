@@ -1,5 +1,6 @@
 package nrg.inc.bykerz.wellness.domain.model.aggregates;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -13,10 +14,15 @@ public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetri
 
     private Long vehicleId;
 
+    @Embedded
     private Coordinates coordinates;
+    @Embedded
     private AirQuality airQuality;
+    @Embedded
     private EnvironmentalConditions environmentalConditions;
+    @Embedded
     private AtmosphericPressure atmosphericPressure;
+    @Embedded
     private StatusImpact statusImpact;
 
     protected WellnessMetric() {super();}
