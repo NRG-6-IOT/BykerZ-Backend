@@ -50,7 +50,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-up")
-    @Operation(summary = "Sign-up", description = "Sign-up with the provided credentials.")
+    @Operation(summary = "Sign-up", description = "Sign-up with the provided details and credentials.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully."),
             @ApiResponse(responseCode = "400", description = "Bad request.")})
