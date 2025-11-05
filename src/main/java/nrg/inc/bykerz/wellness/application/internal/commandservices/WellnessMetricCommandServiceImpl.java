@@ -7,9 +7,11 @@ import nrg.inc.bykerz.wellness.domain.model.commands.DeleteWellnessMetricCommand
 import nrg.inc.bykerz.wellness.domain.model.commands.UpdateWellnessMetricCommand;
 import nrg.inc.bykerz.wellness.domain.services.WellnessMetricCommandService;
 import nrg.inc.bykerz.wellness.infrastructure.persistence.jpa.repositories.WellnessMetricRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class WellnessMetricCommandServiceImpl implements WellnessMetricCommandService {
 
     private final WellnessMetricRepository wellnessMetricRepository;

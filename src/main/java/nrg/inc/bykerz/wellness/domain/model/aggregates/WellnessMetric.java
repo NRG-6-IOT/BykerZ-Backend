@@ -23,14 +23,15 @@ public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetri
 
     public WellnessMetric(CreateWellnessMetricCommand createWellnessMetricCommand){
         this.vehicleId=createWellnessMetricCommand.vehicleId();
-        this.coordinates=createWellnessMetricCommand.coordinates();
-        this.airQuality=createWellnessMetricCommand.airQuality();
-        this.environmentalConditions=createWellnessMetricCommand.environmentalConditions();
-        this.atmosphericPressure=createWellnessMetricCommand.atmosphericPressure();
-        this.statusImpact=createWellnessMetricCommand.statusImpact();
+        this.coordinates=new Coordinates(createWellnessMetricCommand.latitude(), createWellnessMetricCommand.longitude());
+        this.airQuality=new AirQuality(createWellnessMetricCommand.CO2Ppm(), createWellnessMetricCommand.NH3Ppm(), createWellnessMetricCommand.BenzenePpm());
+        this.environmentalConditions=new EnvironmentalConditions(createWellnessMetricCommand.temperatureCelsius(), createWellnessMetricCommand.humidityPercentage());
+        this.atmosphericPressure=new AtmosphericPressure(createWellnessMetricCommand.pressureHpa());
+        this.statusImpact=new StatusImpact(createWellnessMetricCommand.impactDetected());
     }
 
     public WellnessMetric updateWellnessMetric(UpdateWellnessMetricCommand updateWellnessMetricCommand){
+
         setCoordinates(updateWellnessMetricCommand.latitude(),updateWellnessMetricCommand.longitude());
         setAirQuality(updateWellnessMetricCommand.CO2Ppm(),updateWellnessMetricCommand.NH3Ppm(),updateWellnessMetricCommand.BenzenePpm());
         setEnvironmentalConditions(updateWellnessMetricCommand.temperatureCelsius(),updateWellnessMetricCommand.humidityPercentage());

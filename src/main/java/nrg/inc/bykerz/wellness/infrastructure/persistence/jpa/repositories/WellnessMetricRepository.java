@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface WellnessMetricRepository extends JpaRepository<WellnessMetric, Long> {
 
-    Boolean existsWellnessMetricById(Long wellnessMetricId);
-
     List<WellnessMetric> findByVehicleId(Long vehicleId);
 
 
