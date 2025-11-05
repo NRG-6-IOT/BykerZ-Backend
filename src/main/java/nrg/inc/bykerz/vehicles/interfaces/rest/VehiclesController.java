@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,19 +55,14 @@ public class VehiclesController {
     @PostMapping("/{ownerId}")
     @Operation(summary = "Create a new vehicle for a owner")
     public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource createVehicleResource, @PathVariable Long ownerId) {
-
         var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
-
         if (ownerOpt.isEmpty()) {
-            ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
-
         var model = modelQueryService.handle(new GetModelByIdQuery(createVehicleResource.modelId()));
-
         if(model.isEmpty()) {
-            ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
-
         CreateVehicleCommand command = CreateVehicleCommandFromResourceAssembler.toCommandFromResource(createVehicleResource, ownerId);
         var vehicle = vehicleCommandService.handle(command)
                 .orElseThrow(() -> new IllegalArgumentException("Error creating vehicle"));
@@ -113,13 +109,13 @@ public class VehiclesController {
 
     @DeleteMapping("/{vehicleId}")
     @Operation(summary = "Deletes a vehicle by id")
-    public void deleteVehicleById(@PathVariable Long vehicleId) {
+    public ResponseEntity<Void> deleteVehicleById(@PathVariable Long vehicleId) {
         var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
         vehicleCommandService.handle(new DeleteVehicleCommand(vehicleId));
-        ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{vehicleId}")
@@ -127,15 +123,12 @@ public class VehiclesController {
     public ResponseEntity<VehicleResource> updateVehicle(@PathVariable Long vehicleId, @RequestBody UpdateVehicleResource resource) {
         var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
         var newVehicle = vehicleCommandService.handle(UpdateVehicleCommandFromResourceAssembler.toCommandFromResource(resource, vehicleId));
 
-        if (newVehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
-        }
+        return newVehicle.map(value -> new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(value), HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
 
-        return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(newVehicle.get()), HttpStatus.OK);
     }
 
 }
