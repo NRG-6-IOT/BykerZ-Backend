@@ -12,7 +12,7 @@ public class VehicleResourceFromEntityAssembler {
                 vehicle.getId(),
                 vehicle.getOwnerId(),
                 model,
-                vehicle.getYear(),
+                vehicle.getYear().year(),
                 vehicle.getPlate().plate()
         );
     }

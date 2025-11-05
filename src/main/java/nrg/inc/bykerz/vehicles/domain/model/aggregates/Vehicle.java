@@ -6,6 +6,7 @@ import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateR
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
 import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
+import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Year;
 
 @Getter
 @Entity
@@ -17,7 +18,8 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
     @JoinColumn(name = "model_id")
     private Model model;
 
-    private String year;
+    @Embedded
+    private Year year;
 
     @Embedded
     private Plate plate;
@@ -29,7 +31,7 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
     public Vehicle(Long ownerId, Model model, String year, String plate) {
         this.ownerId = ownerId;
         this.model = model;
-        this.year = year;
+        this.year = new Year(year);
         this.plate = new Plate(plate);
     }
 
