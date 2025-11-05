@@ -12,6 +12,7 @@ import nrg.inc.bykerz.assignments.interfaces.rest.transform.CreateAssigmentComma
 import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByCodeQuery;
 import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,19 +23,24 @@ public class VehicleAssigmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final AssignmentCommandService assignmentCommandService;
     private final MechanicQueryService mechanicQueryService;
+    private final VehiclesContextFacade vehiclesContextFacade;
 
-    public VehicleAssigmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService) {
+    public VehicleAssigmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService, VehiclesContextFacade vehiclesContextFacade) {
         this.assignmentQueryService = assignmentQueryService;
         this.assignmentCommandService = assignmentCommandService;
         this.mechanicQueryService = mechanicQueryService;
+        this.vehiclesContextFacade = vehiclesContextFacade;
     }
 
 
     @PostMapping
     @Operation(summary = "Create Assignment for Vehicle", description = "Creates a new assignment for the specified vehicle and associate it to a mechanic depending of its code.")
     public ResponseEntity<AssignmentResource> createAssignment(@PathVariable Long vehicleId, @RequestBody CreateAssigmentResource resource) {
-        //TO-DO: Use mechanic code to find mechanic id
-        //TO-DO: Implement validation get vehicle by vehicle id
+        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(vehicleId);
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
         var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByCodeQuery(resource.mechanicCode()));
         if (mechanicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -49,14 +55,18 @@ public class VehicleAssigmentController {
             return ResponseEntity.badRequest().build();
         }
         var assignment = assignmentOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, vehicle);
         return ResponseEntity.ok(assignmentResource);
     }
 
     @GetMapping()
     @Operation(summary = "Get Assignment for Vehicle", description = "Get the assignment associated to the specified vehicle.")
     public ResponseEntity<AssignmentResource> getAssignment(@PathVariable Long vehicleId) {
-        //TO-DO: Implement validation get vehicle by vehicle id
+        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(vehicleId);
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
         var assignmentOpt = this.assignmentQueryService.handle(new GetAssignmentByVehicleIdQuery(vehicleId));
         if(assignmentOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -67,7 +77,7 @@ public class VehicleAssigmentController {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, vehicle);
         return ResponseEntity.ok(assignmentResource);
     }
 }
