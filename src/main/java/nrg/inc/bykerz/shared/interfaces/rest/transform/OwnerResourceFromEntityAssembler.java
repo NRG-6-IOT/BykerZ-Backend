@@ -7,8 +7,7 @@ public class OwnerResourceFromEntityAssembler {
     public static OwnerResource toResourceFromEntity(Owner entity) {
         return new OwnerResource(
                 entity.getId(),
-                entity.getName(),
-                entity.getCode().code()
+                entity.getName()
         );
     }
 }

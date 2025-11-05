@@ -1,12 +1,12 @@
 package nrg.inc.bykerz.vehicles.domain.model.valueobjects;
 
-public record Plate(String plate) {
-    private static final String PLATE_PATTERN = "^[0-9]{4}-[A-Z]{2}$";
+public record Year(String year) {
+    private static final String YEAR_PATTERN = "^(19|20)\\d{2}$";
 
-    public Plate {
-        if (!isValid(plate)) {
+    public Year {
+        if (!isValid(year)) {
             throw new IllegalArgumentException(
-                    "Invalid plate format. Expected format: 1234-AB"
+                    "Invalid year format. Expected format: YYYY (e.g., 1999, 2020)"
             );
         }
     }
@@ -15,6 +15,6 @@ public record Plate(String plate) {
         if (string == null || string.isBlank()) {
             return false;
         }
-        return string.matches(PLATE_PATTERN);
+        return string.matches(YEAR_PATTERN);
     }
 }
