@@ -4,6 +4,7 @@ public record CreateProfileCommand(
         String firstName,
         String lastName,
         String email,
+        String photoUrl,
         Long userId
 ) {
 }

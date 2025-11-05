@@ -10,6 +10,7 @@ public class ProfileResourceFromEntityAssembler {
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getEmailAddress(),
+                entity.getPhotoUrl(),
                 entity.getUserId()
         );
     }
