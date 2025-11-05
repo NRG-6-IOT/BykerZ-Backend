@@ -9,6 +9,7 @@ public class CreateProfileCommandFromResourceAssembler {
                 resource.firstName(),
                 resource.lastName(),
                 resource.email(),
+                resource.photoUrl(),
                 resource.userId()
         );
     }
