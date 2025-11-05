@@ -8,6 +8,7 @@ import nrg.inc.bykerz.assignments.interfaces.rest.resources.AssignmentResource;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
 import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +23,11 @@ import java.util.List;
 public class MechanicAssigmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final MechanicQueryService mechanicQueryService;
-
-    public MechanicAssigmentController(AssignmentQueryService assignmentQueryService, MechanicQueryService mechanicQueryService) {
+    private final VehiclesContextFacade vehiclesContextFacade;
+    public MechanicAssigmentController(AssignmentQueryService assignmentQueryService, MechanicQueryService mechanicQueryService, VehiclesContextFacade vehiclesContextFacade) {
         this.assignmentQueryService = assignmentQueryService;
         this.mechanicQueryService = mechanicQueryService;
+        this.vehiclesContextFacade = vehiclesContextFacade;
     }
 
     @GetMapping("/{status}")
@@ -46,7 +48,10 @@ public class MechanicAssigmentController {
             return ResponseEntity.ok(List.of());
         }
         var assignmentResources = assignments.stream()
-                .map(a -> AssignmentResourceFromEntityAssembler.toResourceFromEntity(a, mechanic))
+                .flatMap(a -> this.vehiclesContextFacade.fetchVehicleById(a.getVehicleId())
+                        .map(vehicle -> AssignmentResourceFromEntityAssembler.toResourceFromEntity(a, mechanic, vehicle))
+                        .stream()
+                )
                 .toList();
 
         return ResponseEntity.ok(assignmentResources);
