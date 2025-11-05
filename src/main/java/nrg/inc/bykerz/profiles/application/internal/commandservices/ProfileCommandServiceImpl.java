@@ -8,7 +8,9 @@ import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import nrg.inc.bykerz.shared.application.outboundedservices.ExternalIamService;
 import nrg.inc.bykerz.shared.domain.model.commands.CreateMechanicCommand;
+import nrg.inc.bykerz.shared.domain.model.commands.CreateOwnerCommand;
 import nrg.inc.bykerz.shared.domain.services.MechanicCommandService;
+import nrg.inc.bykerz.shared.domain.services.OwnerCommandService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +20,13 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     private final ProfileRepository profileRepository;
     private final ExternalIamService externalIamService;
     private final MechanicCommandService mechanicCommandService;
-    public ProfileCommandServiceImpl(ProfileRepository profileRepository, ExternalIamService externalIamService, MechanicCommandService mechanicCommandService) {
+    private final OwnerCommandService ownerCommandService;
+    public ProfileCommandServiceImpl(
+            ProfileRepository profileRepository,
+            ExternalIamService externalIamService,
+            MechanicCommandService mechanicCommandService,
+            OwnerCommandService ownerCommandService) {
+        this.ownerCommandService = ownerCommandService;
         this.profileRepository = profileRepository;
         this.externalIamService = externalIamService;
         this.mechanicCommandService = mechanicCommandService;
@@ -49,6 +57,13 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
             var mechanic = mechanicCommandService.handle(new CreateMechanicCommand(profile.getId()));
             if (mechanic.isEmpty()) {
                 throw new IllegalArgumentException("Could not create mechanic for profile.");
+            }
+        }
+
+        if(user.get().getUserRoles().stream().anyMatch(role -> role.getName().name().equals("ROLE_OWNER"))) {
+            var owner = ownerCommandService.handle(new CreateOwnerCommand(profile.getId()));
+            if (owner.isEmpty()) {
+                throw new IllegalArgumentException("Could not create owner for profile.");
             }
         }
 
