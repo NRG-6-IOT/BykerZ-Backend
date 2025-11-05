@@ -13,10 +13,10 @@ import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentStat
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentTypeCommandFromResourceAssembler;
 import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping(value = "/api/v1/assignments")
@@ -25,10 +25,12 @@ public class AssignmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final AssignmentCommandService assignmentCommandService;
     private final MechanicQueryService mechanicQueryService;
-    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService) {
+    private final VehiclesContextFacade vehiclesContextFacade;
+    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService, VehiclesContextFacade vehiclesContextFacade) {
         this.assignmentQueryService = assignmentQueryService;
         this.assignmentCommandService = assignmentCommandService;
         this.mechanicQueryService = mechanicQueryService;
+        this.vehiclesContextFacade = vehiclesContextFacade;
     }
 
     @PatchMapping("{assignmentId}/status")
@@ -49,8 +51,12 @@ public class AssignmentController {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic);
+        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(updatedAssignment.getVehicleId());
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, vehicle);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -73,8 +79,12 @@ public class AssignmentController {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic);
+        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(updatedAssignment.getVehicleId());
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, vehicle);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -92,8 +102,12 @@ public class AssignmentController {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic);
+        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(assignment.getVehicleId());
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicle = vehicleOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, vehicle);
         return ResponseEntity.ok(assignmentResource);
     }
 }
