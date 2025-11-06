@@ -8,6 +8,8 @@ public class WellnessMetricResourceFromEntityAssembler {
         return new WellnessMetricResource(
                 entity.getId(),
 
+                entity.getVehicleId(),
+
                 entity.getCoordinates().latitude(),
                 entity.getCoordinates().longitude(),
 

@@ -3,6 +3,8 @@ package nrg.inc.bykerz.wellness.interfaces.rest.resources;
 public record WellnessMetricResource(
         Long id,
 
+        Long vehicleId,
+
         Float latitude,
         Float longitude,
 

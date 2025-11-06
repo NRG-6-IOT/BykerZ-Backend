@@ -6,6 +6,7 @@ import nrg.inc.bykerz.wellness.domain.model.commands.CreateWellnessMetricCommand
 import nrg.inc.bykerz.wellness.domain.model.commands.DeleteWellnessMetricCommand;
 import nrg.inc.bykerz.wellness.domain.model.commands.UpdateWellnessMetricCommand;
 import nrg.inc.bykerz.wellness.domain.services.WellnessMetricCommandService;
+import nrg.inc.bykerz.wellness.domain.services.WellnessMonitoringService;
 import nrg.inc.bykerz.wellness.infrastructure.persistence.jpa.repositories.WellnessMetricRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class WellnessMetricCommandServiceImpl implements WellnessMetricCommandService {
 
     private final WellnessMetricRepository wellnessMetricRepository;
+    private final WellnessMonitoringService wellnessMonitoringService;
 
-    public WellnessMetricCommandServiceImpl(WellnessMetricRepository wellnessMetricRepository) {
+    public WellnessMetricCommandServiceImpl(WellnessMetricRepository wellnessMetricRepository, WellnessMonitoringService WellnessMonitoringService) {
         this.wellnessMetricRepository = wellnessMetricRepository;
+        this.wellnessMonitoringService =  WellnessMonitoringService;
     }
 
     @Override
@@ -29,7 +32,10 @@ public class WellnessMetricCommandServiceImpl implements WellnessMetricCommandSe
         var wellnessMetric = new WellnessMetric(createWellnessMetricCommand);
 
         try{
-            wellnessMetricRepository.save(wellnessMetric);
+            var savedMetric = wellnessMetricRepository.save(wellnessMetric);
+            // Check for alerts after saving the metric
+            wellnessMonitoringService.checkEnvironmentalAlerts(savedMetric);
+
             return wellnessMetric.getId();
         } catch (Exception e){
             throw new IllegalArgumentException(e.getMessage());
@@ -44,7 +50,13 @@ public class WellnessMetricCommandServiceImpl implements WellnessMetricCommandSe
                 ));
 
         var updatedMetric = metric.updateWellnessMetric(command);
-        return Optional.of(wellnessMetricRepository.save(updatedMetric));
+
+        var savedMetric = wellnessMetricRepository.save(updatedMetric);
+
+        // Check for alerts after updating the metric
+        wellnessMonitoringService.checkEnvironmentalAlerts(savedMetric);
+
+        return Optional.of(savedMetric);
     }
 
     @Override

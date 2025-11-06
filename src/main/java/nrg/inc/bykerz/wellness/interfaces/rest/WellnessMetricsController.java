@@ -21,6 +21,7 @@ import nrg.inc.bykerz.wellness.interfaces.rest.transform.WellnessMetricResourceF
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -184,9 +185,9 @@ public class WellnessMetricsController {
         // Handle the query
         var wellnessMetrics = wellnessMetricQueryService.handle(getWellnessMetricsByVehicleIdQuery);
 
-        // Validate if metrics exist for this vehicle
+        // Validate if metrics is empty for this vehicle
         if (wellnessMetrics.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(200).body(Collections.emptyList());
         }
 
         // Transform to resources
