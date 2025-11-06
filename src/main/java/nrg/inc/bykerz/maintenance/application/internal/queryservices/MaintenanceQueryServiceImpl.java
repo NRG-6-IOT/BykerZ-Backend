@@ -1,6 +1,7 @@
 package nrg.inc.bykerz.maintenance.application.internal.queryservices;
 
 import nrg.inc.bykerz.maintenance.domain.model.agreggates.Maintenance;
+import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByMechanicIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByVehicleIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetMaintenanceByIdQuery;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceQueryService;
@@ -21,11 +22,16 @@ public class MaintenanceQueryServiceImpl implements MaintenanceQueryService {
 
     @Override
     public List<Maintenance> handle(GetAllMaintenancesByVehicleIdQuery query) {
-        return maintenanceRepository.getMaintenancesByVehicle_Id(query.vehicleId());
+        return maintenanceRepository.findByVehicleId(query.vehicleId());
     }
 
     @Override
     public Optional<Maintenance> handle(GetMaintenanceByIdQuery query) {
         return maintenanceRepository.findById(query.maintenanceId());
+    }
+
+    @Override
+    public List<Maintenance> handle(GetAllMaintenancesByMechanicIdQuery query) {
+        return maintenanceRepository.findByMechanicId(query.mechanicId());
     }
 }

@@ -10,7 +10,8 @@ public class CreateMaintenanceCommandFromResourceAssembler {
                 resource.vehicleId(),
                 resource.dateOfService(),
                 resource.location(),
-                resource.description()
+                resource.description(),
+                resource.mechanicId()
         );
     }
 }

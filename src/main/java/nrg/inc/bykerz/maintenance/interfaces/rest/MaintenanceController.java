@@ -6,6 +6,7 @@ import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.maintenance.domain.model.commands.AssignExpenseToMaintenanceCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteMaintenanceCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.UpdateStateOfMaintenanceByIdCommand;
+import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByMechanicIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByVehicleIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetMaintenanceByIdQuery;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceCommandService;
@@ -71,6 +72,7 @@ public class MaintenanceController {
 
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping
     @Operation(summary = "Create a new Maintenance", description = "Create a new maintenance ")
     public ResponseEntity<MaintenanceResource> createMaintenance(@RequestBody CreateMaintenanceResource resource) {
@@ -119,6 +121,18 @@ public class MaintenanceController {
         var maintenanceResource = MaintenanceResourceFromEntityAssembler.toResourceFromEntity(maintenance.get());
 
         return ResponseEntity.ok(maintenanceResource);
+    }
+
+    @GetMapping("/mechanic/{mechanicId}")
+    @Operation(summary = "Get Maintenances By Mechanic Id", description = "Get all the maintenances assigned to a mechanic by his id" )
+    public ResponseEntity<List<MaintenanceResource>> getMaintenancesByMechanicId(@PathVariable Long mechanicId){
+        var maintenancesList = maintenanceQueryService.handle(new GetAllMaintenancesByMechanicIdQuery(mechanicId));
+
+        var maintenancesResources = maintenancesList.stream()
+                .map(MaintenanceResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return ResponseEntity.ok(maintenancesResources);
     }
 
 }

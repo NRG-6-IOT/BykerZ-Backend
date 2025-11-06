@@ -40,11 +40,12 @@ public class MaintenanceCommandServiceImpl implements MaintenanceCommandService 
 
         var maintenance = new Maintenance(
                 command.details(),
-                vehicle.get(),
+                command.vehicleId(),
                 command.dateOfService(),
                 command.location(),
                 command.description(),
-                new MaintenanceState(MaintenanceStates.PENDING)
+                new MaintenanceState(MaintenanceStates.PENDING),
+                command.mechanicId()
         );
 
 

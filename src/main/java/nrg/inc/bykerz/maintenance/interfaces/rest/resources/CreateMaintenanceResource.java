@@ -7,6 +7,7 @@ public record CreateMaintenanceResource(
         Long vehicleId,
         Date dateOfService,
         String location,
-        String description
+        String description,
+        Long mechanicId
 ) {
 }

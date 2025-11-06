@@ -37,7 +37,7 @@ public class ExpenseCommandServiceImpl implements ExpenseCommandService {
         var expense = new Expense(
                 command.name(),
                 command.finalPrice(),
-                user.get(),
+                command.userId(),
                 new ExpenseType(ExpenseTypes.valueOf(command.expenseType()))
         );
 

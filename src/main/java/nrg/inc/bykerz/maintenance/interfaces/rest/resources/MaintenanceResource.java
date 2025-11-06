@@ -8,6 +8,7 @@ public record MaintenanceResource(
         String location,
         String description,
         String state,
-        ExpenseResource expense
+        ExpenseResource expense,
+        Long mechanicId
 ) {
 }
