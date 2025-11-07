@@ -1,7 +1,7 @@
 package nrg.inc.bykerz.vehicles.domain.services;
 
 
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByPlateQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;

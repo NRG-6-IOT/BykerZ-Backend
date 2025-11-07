@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.vehicles.domain.model.commands;
 
-public record CreateVehicleCommand(
+public record AddVehicleToOwnerCommand(
         Long ownerId,
         Long modelId,
         String year,

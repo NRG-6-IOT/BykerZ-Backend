@@ -1,10 +1,10 @@
-package nrg.inc.bykerz.shared.application.commandservices;
+package nrg.inc.bykerz.vehicles.application.internal.commandservices;
 
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
-import nrg.inc.bykerz.shared.domain.model.aggregates.Owner;
-import nrg.inc.bykerz.shared.domain.model.commands.CreateOwnerCommand;
-import nrg.inc.bykerz.shared.domain.services.OwnerCommandService;
-import nrg.inc.bykerz.shared.infrastructure.persistence.jpa.repositories.OwnerRepository;
+import nrg.inc.bykerz.vehicles.domain.model.aggregates.Owner;
+import nrg.inc.bykerz.vehicles.domain.model.commands.CreateOwnerCommand;
+import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
+import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class OwnerCommandServiceImpl implements OwnerCommandService {
             return Optional.empty();
         }
         var profile = profileOpt.get();
-        var owner = new Owner(profile);
+        var owner = new Owner(profile.getId());
         var savedOwner = ownerRepository.save(owner);
         return Optional.of(savedOwner);
     }

@@ -1,8 +1,9 @@
-package nrg.inc.bykerz.vehicles.domain.model.entities;
+package nrg.inc.bykerz.vehicles.domain.model.aggregates;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import nrg.inc.bykerz.shared.domain.model.entity.AuditableModel;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateModelCommand;
 
 import java.util.Date;

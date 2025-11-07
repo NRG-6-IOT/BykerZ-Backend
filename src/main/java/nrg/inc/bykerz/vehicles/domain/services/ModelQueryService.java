@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.vehicles.domain.services;
 
-import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
+import nrg.inc.bykerz.vehicles.domain.model.aggregates.Model;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllBrandsQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllModelsQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;

@@ -1,8 +1,9 @@
 package nrg.inc.bykerz.vehicles.application.internal.commandservices;
 
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
-import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
-import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
+import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleFromOwnerCommand;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
+import nrg.inc.bykerz.vehicles.domain.model.commands.AddVehicleToOwnerCommand;
+import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleFromOwnerCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
 import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
@@ -25,7 +26,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     }
 
     @Override
-    public Optional<Vehicle> handle(CreateVehicleCommand command) {
+    public Optional<Vehicle> handle(AddVehicleToOwnerCommand command) {
         var model = modelRepository.findById(command.modelId());
 
         if (model.isEmpty()) throw new IllegalArgumentException("Cannot find model with id: " + command.modelId());
@@ -41,8 +42,8 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     }
 
     @Override
-    public Optional<Vehicle> handle(UpdateVehicleCommand command) {
-        var vehicle = vehicleRepository.findById(command.id());
+    public Optional<Vehicle> handle(UpdateVehicleFromOwnerCommand command) {
+        var vehicle = vehicleRepository.findById(command.vehicleId());
         if (vehicle.isEmpty()) throw new IllegalArgumentException("Cannot find vehicle with id: " + command.id());
         if (Objects.equals(vehicle.get().getPlate(), command.plate()) && vehicleRepository.existsByPlate(new Plate(command.plate()))) throw new IllegalArgumentException("Another vehicle already exists with plate: " + command.plate());
         var updatedVehicle = vehicle.get().UpdateVehicle(command);
@@ -56,7 +57,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     }
 
     @Override
-    public void handle(DeleteVehicleCommand command) {
+    public void handle(DeleteVehicleFromOwnerCommand command) {
         if (vehicleRepository.existsById(command.id())) {
             vehicleRepository.deleteById(command.id());
         } else  {

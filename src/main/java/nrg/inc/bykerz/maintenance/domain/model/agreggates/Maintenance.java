@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nrg.inc.bykerz.maintenance.domain.model.entities.MaintenanceState;
-import nrg.inc.bykerz.maintenance.domain.model.valueobjects.MaintenanceStates;
 import nrg.inc.bykerz.shared.domain.model.entity.AuditableModel;
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 
 import java.util.Date;
 

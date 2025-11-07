@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.vehicles.application.internal.acl;
 
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByPlateQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
