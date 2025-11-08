@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+public interface VehicleReadRepository extends JpaRepository<Vehicle, Long> {
     boolean existsByPlate(Plate plate);
     Optional<Vehicle> findByPlate(Plate plate);
     List<Vehicle> findByOwnerId(Long ownerId);

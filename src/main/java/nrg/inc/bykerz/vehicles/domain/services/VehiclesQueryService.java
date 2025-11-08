@@ -11,8 +11,4 @@ import java.util.Optional;
 
 public interface VehiclesQueryService {
 
-    Optional<Vehicle> handle(GetVehicleByIdQuery query);
-
-    Optional<Vehicle> handle(GetVehicleByPlateQuery query);
-    List<Vehicle> handle(GetVehiclesByOwnerIdQuery query);
 }

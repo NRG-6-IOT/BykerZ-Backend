@@ -20,29 +20,5 @@ public class VehiclesContextFacadeImpl implements VehiclesContextFacade {
         this.vehiclesQueryService = vehiclesQueryService;
     }
 
-    @Override
-    public Optional<Vehicle> fetchVehicleById(Long vehicleId) {
-        if (vehicleId == null || vehicleId <= 0) {
-            return Optional.empty();
-        }
-        return this.vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
-    }
-
-    @Override
-    public Optional<Vehicle> fetchVehicleByPlate(String plate) {
-        if (!Plate.isValid(plate)) {
-            return Optional.empty();
-        }
-        return this.vehiclesQueryService.handle(new GetVehicleByPlateQuery(plate));
-    }
-
-    @Override
-    public List<Vehicle> fetchVehiclesByOwnerId(Long ownerId) {
-        if (ownerId == null || ownerId <= 0) {
-            return List.of();
-        }
-        return this.vehiclesQueryService.handle(new GetVehiclesByOwnerIdQuery(ownerId));
-    }
-
 
 }
