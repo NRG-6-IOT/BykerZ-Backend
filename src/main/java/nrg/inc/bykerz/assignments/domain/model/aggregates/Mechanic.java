@@ -5,30 +5,41 @@ import lombok.Getter;
 import lombok.Setter;
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import nrg.inc.bykerz.assignments.domain.model.valueobjects.MechanicCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 public class Mechanic extends AuditableAbstractAggregateRoot<Mechanic> {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
 
-    @Embedded
-    @Setter
-    @AttributeOverride(name = "code", column = @Column(name = "code", unique = true))
-    private MechanicCode code;
+
+    @OneToMany(mappedBy = "mechanic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Assignment> assignments = new ArrayList<>();
 
     protected Mechanic() {
     }
 
-    public Mechanic(Profile profile, MechanicCode code) {
+    public Mechanic(Profile profile) {
         this.profile = profile;
-        this.code = code;
     }
 
     public String getName() {
         return profile.getFirstName() + " " + profile.getLastName();
+    }
+
+    public void addAssignment(Assignment assignment) {
+        assignments.add(assignment);
+        assignment.setMechanic(this);
+    }
+
+    public void removeAssignment(Assignment assignment) {
+        assignments.remove(assignment);
+        assignment.setMechanic(null);
     }
 }
