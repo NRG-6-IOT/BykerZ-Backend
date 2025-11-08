@@ -1,10 +1,11 @@
-package nrg.inc.bykerz.shared.domain.model.aggregates;
+package nrg.inc.bykerz.assignments.domain.model.aggregates;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
-import nrg.inc.bykerz.shared.domain.model.valueobjects.MechanicCode;
+import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import nrg.inc.bykerz.assignments.domain.model.valueobjects.MechanicCode;
 
 @Entity
 @Getter

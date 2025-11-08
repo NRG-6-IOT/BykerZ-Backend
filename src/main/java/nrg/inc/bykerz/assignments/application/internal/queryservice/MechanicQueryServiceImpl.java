@@ -1,11 +1,11 @@
-package nrg.inc.bykerz.shared.application.queryservices;
+package nrg.inc.bykerz.assignments.application.internal.queryservice;
 
-import nrg.inc.bykerz.shared.domain.model.aggregates.Mechanic;
-import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByCodeQuery;
-import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
-import nrg.inc.bykerz.shared.domain.model.valueobjects.MechanicCode;
-import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
-import nrg.inc.bykerz.shared.infrastructure.persistence.jpa.repositories.MechanicRepository;
+import nrg.inc.bykerz.assignments.domain.model.aggregates.Mechanic;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByCodeQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
+import nrg.inc.bykerz.assignments.domain.model.valueobjects.MechanicCode;
+import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.MechanicRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

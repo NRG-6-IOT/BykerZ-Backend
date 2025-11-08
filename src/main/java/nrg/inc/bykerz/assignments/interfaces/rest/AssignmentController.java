@@ -11,8 +11,8 @@ import nrg.inc.bykerz.assignments.interfaces.rest.resources.UpdateAssignmentType
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentStatusCommandFromResourceAssembler;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentTypeCommandFromResourceAssembler;
-import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
-import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
+import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

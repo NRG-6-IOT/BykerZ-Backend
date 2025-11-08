@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.shared.domain.model.valueobjects;
+package nrg.inc.bykerz.assignments.domain.model.valueobjects;
 
 import java.security.SecureRandom;
 

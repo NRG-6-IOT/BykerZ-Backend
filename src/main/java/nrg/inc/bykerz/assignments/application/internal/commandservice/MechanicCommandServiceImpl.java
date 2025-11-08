@@ -1,11 +1,11 @@
-package nrg.inc.bykerz.shared.application.commandservices;
+package nrg.inc.bykerz.assignments.application.internal.commandservice;
 
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
-import nrg.inc.bykerz.shared.domain.model.aggregates.Mechanic;
-import nrg.inc.bykerz.shared.domain.model.commands.CreateMechanicCommand;
-import nrg.inc.bykerz.shared.domain.model.valueobjects.MechanicCode;
-import nrg.inc.bykerz.shared.domain.services.MechanicCommandService;
-import nrg.inc.bykerz.shared.infrastructure.persistence.jpa.repositories.MechanicRepository;
+import nrg.inc.bykerz.assignments.domain.model.aggregates.Mechanic;
+import nrg.inc.bykerz.assignments.domain.model.commands.CreateMechanicCommand;
+import nrg.inc.bykerz.assignments.domain.model.valueobjects.MechanicCode;
+import nrg.inc.bykerz.assignments.domain.services.MechanicCommandService;
+import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.MechanicRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

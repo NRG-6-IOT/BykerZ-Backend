@@ -7,9 +7,9 @@ import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import nrg.inc.bykerz.shared.application.outboundedservices.ExternalIamService;
-import nrg.inc.bykerz.shared.domain.model.commands.CreateMechanicCommand;
+import nrg.inc.bykerz.assignments.domain.model.commands.CreateMechanicCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateOwnerCommand;
-import nrg.inc.bykerz.shared.domain.services.MechanicCommandService;
+import nrg.inc.bykerz.assignments.domain.services.MechanicCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
 import org.springframework.stereotype.Service;
 

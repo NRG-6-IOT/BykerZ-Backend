@@ -1,7 +1,7 @@
-package nrg.inc.bykerz.shared.infrastructure.persistence.jpa.repositories;
+package nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories;
 
-import nrg.inc.bykerz.shared.domain.model.aggregates.Mechanic;
-import nrg.inc.bykerz.shared.domain.model.valueobjects.MechanicCode;
+import nrg.inc.bykerz.assignments.domain.model.aggregates.Mechanic;
+import nrg.inc.bykerz.assignments.domain.model.valueobjects.MechanicCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

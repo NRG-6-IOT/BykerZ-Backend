@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.shared.interfaces.rest.resources;
+package nrg.inc.bykerz.assignments.interfaces.rest.resources;
 
 public record MechanicResource(
         Long mechanicId,
