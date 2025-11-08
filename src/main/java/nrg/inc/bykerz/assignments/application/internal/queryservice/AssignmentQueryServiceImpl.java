@@ -1,9 +1,11 @@
 package nrg.inc.bykerz.assignments.application.internal.queryservice;
 
 import nrg.inc.bykerz.assignments.domain.model.aggregates.Assignment;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetAssigmentByCodeQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByVehicleIdQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByOwnerIdQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentsByMechanicIdAndStatusQuery;
+import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentCode;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentStatus;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
 import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.AssignmentRepository;
@@ -22,27 +24,33 @@ public class AssignmentQueryServiceImpl implements AssignmentQueryService {
     }
 
     @Override
-    public Optional<Assignment> handle(GetAssignmentByVehicleIdQuery getAssignmentByVehicleIdQuery) {
-        return this.assignmentRepository.findByVehicleId(getAssignmentByVehicleIdQuery.vehicleId());
+    public Optional<Assignment> handle(GetAssignmentByOwnerIdQuery query) {
+        return this.assignmentRepository.findByOwnerId(query.ownerId());
     }
 
     @Override
-    public List<Assignment> handle(GetAssignmentsByMechanicIdAndStatusQuery getAssignmentsByMechanicIdAndStatusQuery) {
+    public List<Assignment> handle(GetAssignmentsByMechanicIdAndStatusQuery query) {
         AssignmentStatus status;
         try {
-            status = AssignmentStatus.valueOf(getAssignmentsByMechanicIdAndStatusQuery.status().toUpperCase());
+            status = AssignmentStatus.valueOf(query.status().toUpperCase());
         } catch (IllegalArgumentException e) {
             // Manejo de error si el estado no es válido
-            throw new RuntimeException("Invalid status: " + getAssignmentsByMechanicIdAndStatusQuery.status(), e);
+            throw new RuntimeException("Invalid status: " + query.status(), e);
         }
 
-        return this.assignmentRepository.findByMechanicId(getAssignmentsByMechanicIdAndStatusQuery.mechanicId()).stream()
+        return this.assignmentRepository.findByMechanic_Id(query.mechanicId()).stream()
                 .filter(assignment -> assignment.getStatus().equals(status))
                 .toList();
     }
 
     @Override
-    public Optional<Assignment> handle(GetAssignmentByIdQuery getAssignmentByIdQuery) {
-        return this.assignmentRepository.findById(getAssignmentByIdQuery.assignmentId());
+    public Optional<Assignment> handle(GetAssignmentByIdQuery query) {
+        return this.assignmentRepository.findById(query.assignmentId());
+    }
+
+    @Override
+    public Optional<Assignment> handle(GetAssigmentByCodeQuery query) {
+        var code = new AssignmentCode(query.assignmentCode());
+        return this.assignmentRepository.findByAssignmentCode(code);
     }
 }

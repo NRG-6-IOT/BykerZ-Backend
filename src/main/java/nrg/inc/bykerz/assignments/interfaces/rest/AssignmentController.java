@@ -2,6 +2,9 @@ package nrg.inc.bykerz.assignments.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nrg.inc.bykerz.assignments.application.external.ExternalVehiclesService;
+import nrg.inc.bykerz.assignments.domain.model.commands.AssignOwnerToAssignmentCommand;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetAssigmentByCodeQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentCommandService;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
@@ -13,7 +16,6 @@ import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentStat
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentTypeCommandFromResourceAssembler;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
-import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +27,12 @@ public class AssignmentController {
     private final AssignmentQueryService assignmentQueryService;
     private final AssignmentCommandService assignmentCommandService;
     private final MechanicQueryService mechanicQueryService;
-    private final VehiclesContextFacade vehiclesContextFacade;
-    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService, VehiclesContextFacade vehiclesContextFacade) {
+    private final ExternalVehiclesService externalVehiclesService;
+    public AssignmentController(AssignmentQueryService assignmentQueryService, AssignmentCommandService assignmentCommandService, MechanicQueryService mechanicQueryService, ExternalVehiclesService externalVehiclesService) {
         this.assignmentQueryService = assignmentQueryService;
         this.assignmentCommandService = assignmentCommandService;
+        this.externalVehiclesService = externalVehiclesService;
         this.mechanicQueryService = mechanicQueryService;
-        this.vehiclesContextFacade = vehiclesContextFacade;
     }
 
     @PatchMapping("{assignmentId}/status")
@@ -46,17 +48,20 @@ public class AssignmentController {
             return ResponseEntity.badRequest().build();
         }
         var updatedAssignment = updatedAssignmentOpt.get();
-        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanicId()));
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanic().getId()));
         if (mechanicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(updatedAssignment.getVehicleId());
-        if (vehicleOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        var ownerOpt = updatedAssignment.getOwnerId() == null ? null : this.externalVehiclesService.getOwnerById(updatedAssignment.getOwnerId());
+        if(ownerOpt != null) {
+            if (ownerOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
         }
-        var vehicle = vehicleOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, vehicle);
+        var owner = ownerOpt == null ? null : ownerOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, owner);
+
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -74,17 +79,19 @@ public class AssignmentController {
         }
         var updatedAssignment = updatedAssignmentOpt.get();
 
-        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanicId()));
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanic().getId()));
         if (mechanicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(updatedAssignment.getVehicleId());
-        if (vehicleOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        var ownerOpt = updatedAssignment.getOwnerId() == null ? null : this.externalVehiclesService.getOwnerById(updatedAssignment.getOwnerId());
+        if(ownerOpt != null) {
+            if (ownerOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
         }
-        var vehicle = vehicleOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, vehicle);
+        var owner = ownerOpt == null ? null : ownerOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, owner);
         return ResponseEntity.ok(assignmentResource);
     }
 
@@ -97,17 +104,52 @@ public class AssignmentController {
         }
         var assignment = assignmentOpt.get();
 
-        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanicId()));
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
         if (mechanicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         var mechanic = mechanicOpt.get();
-        var vehicleOpt = this.vehiclesContextFacade.fetchVehicleById(assignment.getVehicleId());
-        if (vehicleOpt.isEmpty()) {
+
+        var ownerOpt = assignment.getOwnerId() == null ? null : this.externalVehiclesService.getOwnerById(assignment.getOwnerId());
+        if(ownerOpt != null) {
+            if (ownerOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        var owner = ownerOpt == null ? null : ownerOpt.get();
+
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, owner);
+        return ResponseEntity.ok(assignmentResource);
+    }
+
+    @PatchMapping("code/{assignmentCode}/assign-owner/{ownerId}")
+    @Operation(summary = "Assign Owner to Assignment", description = "Assign an owner to an existing assignment")
+    public ResponseEntity<AssignmentResource> assignOwnerToAssignment(@PathVariable String assignmentCode, @PathVariable Long ownerId) {
+        var assignmentOpt = this.assignmentQueryService.handle(new GetAssigmentByCodeQuery(assignmentCode));
+        if (assignmentOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        var vehicle = vehicleOpt.get();
-        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, vehicle);
+
+
+        var command = new AssignOwnerToAssignmentCommand(assignmentCode, ownerId);
+        var updatedAssignmentOpt = this.assignmentCommandService.handle(command);
+        if (updatedAssignmentOpt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        var updatedAssignment = updatedAssignmentOpt.get();
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(updatedAssignment.getMechanic().getId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+        var ownerOpt = updatedAssignment.getOwnerId() == null ? null : this.externalVehiclesService.getOwnerById(updatedAssignment.getOwnerId());
+        if(ownerOpt != null) {
+            if (ownerOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        var owner = ownerOpt == null ? null : ownerOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, owner);
         return ResponseEntity.ok(assignmentResource);
     }
 }
