@@ -2,7 +2,7 @@ package nrg.inc.bykerz.vehicles.domain.services;
 
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateModelCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.SeedModelsCommand;
-import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
+import nrg.inc.bykerz.vehicles.domain.model.aggregates.Model;
 
 import java.util.Optional;
 

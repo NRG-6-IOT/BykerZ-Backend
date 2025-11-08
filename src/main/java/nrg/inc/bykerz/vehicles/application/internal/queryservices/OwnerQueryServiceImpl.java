@@ -1,9 +1,9 @@
-package nrg.inc.bykerz.shared.application.queryservices;
+package nrg.inc.bykerz.vehicles.application.internal.queryservices;
 
-import nrg.inc.bykerz.shared.domain.model.aggregates.Owner;
-import nrg.inc.bykerz.shared.domain.model.queries.GetOwnerByIdQuery;
-import nrg.inc.bykerz.shared.domain.services.OwnerQueryService;
-import nrg.inc.bykerz.shared.infrastructure.persistence.jpa.repositories.OwnerRepository;
+import nrg.inc.bykerz.vehicles.domain.model.aggregates.Owner;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.services.OwnerQueryService;
+import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -2,7 +2,7 @@ package nrg.inc.bykerz.vehicles.application.internal.commandservices;
 
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateModelCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.SeedModelsCommand;
-import nrg.inc.bykerz.vehicles.domain.model.entities.Model;
+import nrg.inc.bykerz.vehicles.domain.model.aggregates.Model;
 import nrg.inc.bykerz.vehicles.domain.services.ModelCommandService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.ModelRepository;
 import org.springframework.stereotype.Service;

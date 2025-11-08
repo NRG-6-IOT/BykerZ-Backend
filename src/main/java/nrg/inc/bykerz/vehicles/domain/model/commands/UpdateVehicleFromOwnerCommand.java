@@ -1,8 +1,7 @@
 package nrg.inc.bykerz.vehicles.domain.model.commands;
 
-public record CreateVehicleCommand(
+public record UpdateVehicleFromOwnerCommand(
         Long ownerId,
-        Long modelId,
-        String year,
+        Long vehicleId,
         String plate
 ) {}

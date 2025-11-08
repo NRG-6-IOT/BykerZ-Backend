@@ -1,11 +1,9 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest.resources;
 
-public record VehicleResource(
-        Long id,
+public record AddVehicleResource(
         Long ownerId,
-        ModelResource model,
         String plate,
-        String year
+        String year,
+        Long modelId
 ) {
-
 }

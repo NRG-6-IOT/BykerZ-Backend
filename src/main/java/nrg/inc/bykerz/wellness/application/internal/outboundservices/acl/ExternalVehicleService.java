@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.wellness.application.internal.outboundservices.acl;
 
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.stereotype.Service;
 
