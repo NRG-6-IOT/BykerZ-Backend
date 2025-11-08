@@ -66,7 +66,7 @@ public class OwnerCommandServiceImpl implements OwnerCommandService {
         }
 
         var ownerEntity = owner.get();
-        var vehicle = ownerEntity.AddVehicle(command.modelId(), command.year(), command.plate());
+        var vehicle = ownerEntity.AddVehicle(model.get(), command.year(), command.plate());
 
         try {
             ownerRepository.save(ownerEntity);

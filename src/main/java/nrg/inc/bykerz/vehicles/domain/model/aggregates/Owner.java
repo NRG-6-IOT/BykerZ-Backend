@@ -7,6 +7,7 @@ import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateR
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleFromOwnerCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,8 +16,8 @@ public class Owner extends AuditableAbstractAggregateRoot<Owner> {
 
     private Long profileId;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vehicle> vehicles;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "owner")
+    private List<Vehicle> vehicles = new ArrayList<>();
 
     protected Owner() {
     }
@@ -25,8 +26,9 @@ public class Owner extends AuditableAbstractAggregateRoot<Owner> {
         this.profileId = profileId;
     }
 
-    public Vehicle AddVehicle(Long modelId, String year, String plate) {
-        var vehicle = new Vehicle(this, modelId, year, plate);
+    public Vehicle AddVehicle(Model model, String year, String plate) {
+        var vehicle = new Vehicle(model, year, plate);
+        vehicle.setOwner(this);
         this.vehicles.add(vehicle);
         return vehicle;
     }
@@ -34,7 +36,7 @@ public class Owner extends AuditableAbstractAggregateRoot<Owner> {
     public List<Vehicle> GetVehicles() { return vehicles; }
 
     public void DeleteVehicle(Long vehicleId) {
-        this.vehicles.remove(this.vehicles.stream().filter(v -> v.getId().equals(vehicleId)).findFirst().orElse(null));
+        vehicles.removeIf(v -> v.getId().equals(vehicleId));
     }
 
     public Vehicle UpdateVehicle(UpdateVehicleFromOwnerCommand command) {

@@ -2,10 +2,10 @@ package nrg.inc.bykerz.vehicles.domain.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import nrg.inc.bykerz.shared.domain.model.entity.AuditableModel;
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Model;
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Owner;
-import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleCommand;
 import nrg.inc.bykerz.vehicles.domain.model.commands.UpdateVehicleFromOwnerCommand;
 import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Plate;
 import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Year;
@@ -17,11 +17,14 @@ import nrg.inc.bykerz.vehicles.domain.model.valueobjects.Year;
 })
 public class Vehicle extends AuditableModel {
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
-    private Long modelId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id", nullable = false)
+    private Model model;
 
     @Embedded
     private Year year;
@@ -33,9 +36,8 @@ public class Vehicle extends AuditableModel {
         super();
     }
 
-    public Vehicle(Owner owner, Long modelId, String year, String plate) {
-        this.owner = owner;
-        this.modelId = modelId;
+    public Vehicle(Model model, String year, String plate) {
+        this.model = model;
         this.year = new Year(year);
         this.plate = new Plate(plate);
     }
@@ -44,7 +46,5 @@ public class Vehicle extends AuditableModel {
         this.plate = new Plate(command.plate());
         return this;
     }
-
-
 
 }

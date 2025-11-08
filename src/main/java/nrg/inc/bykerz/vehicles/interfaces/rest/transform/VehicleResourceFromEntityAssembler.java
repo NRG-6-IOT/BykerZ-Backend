@@ -10,10 +10,10 @@ public class VehicleResourceFromEntityAssembler {
 
         return new VehicleResource(
                 vehicle.getId(),
-                vehicle.getOwnerId(),
+                vehicle.getOwner().getId(),
                 model,
-                vehicle.getYear().year(),
-                vehicle.getPlate().plate()
+                vehicle.getPlate().plate(),
+                vehicle.getYear().year()
         );
     }
 }
