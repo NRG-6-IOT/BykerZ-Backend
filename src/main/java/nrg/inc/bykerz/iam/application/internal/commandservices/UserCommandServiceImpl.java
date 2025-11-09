@@ -138,7 +138,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
         var roles= signUpCommand.roles().stream().map(
                 role->roleRepository.findByName(role)
-                        .orElseThrow(() -> new IllegalArgumentException("Role " + role + " not found"))
+                        .orElseThrow(() -> new IllegalArgumentException("Role not found"))
                 ).toList();
         var user = new User(signUpCommand.username(), hashingService.encode(signUpCommand.password()), roles);
         userRepository.save(user);
