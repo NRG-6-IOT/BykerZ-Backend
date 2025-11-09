@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.application.external;
+package nrg.inc.bykerz.iam.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.profiles.interfaces.acl.ProfileContextFacade;
 import org.springframework.stereotype.Service;
