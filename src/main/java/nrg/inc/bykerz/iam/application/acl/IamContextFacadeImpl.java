@@ -19,11 +19,9 @@ import java.util.stream.Collectors;
 public class IamContextFacadeImpl implements IamContextFacade {
 
     private final UserQueryService userQueryService;
-    private final UserCommandService userCommandService;
 
-    public IamContextFacadeImpl(UserQueryService userQueryService, UserCommandService userCommandService) {
+    public IamContextFacadeImpl(UserQueryService userQueryService) {
         this.userQueryService = userQueryService;
-        this.userCommandService = userCommandService;
     }
 
     @Override
