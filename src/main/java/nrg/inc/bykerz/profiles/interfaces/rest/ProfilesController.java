@@ -9,13 +9,9 @@ import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByIdQuery;
 import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByUserId;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
-import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.domain.services.ProfileQueryService;
-import nrg.inc.bykerz.profiles.interfaces.rest.resources.CreateProfileResource;
 import nrg.inc.bykerz.profiles.interfaces.rest.resources.ProfileResource;
-import nrg.inc.bykerz.profiles.interfaces.rest.transform.CreateProfileCommandFromResourceAssembler;
 import nrg.inc.bykerz.profiles.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,26 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Profiles", description = "Operations related to profiles")
 public class ProfilesController {
-    private final ProfileCommandService profileCommandService;
     private final ProfileQueryService profileQueryService;
 
-    public ProfilesController(ProfileCommandService profileCommandService, ProfileQueryService profileQueryService) {
-        this.profileCommandService = profileCommandService;
+    public ProfilesController(ProfileQueryService profileQueryService) {
         this.profileQueryService = profileQueryService;
-    }
-
-    @PostMapping
-    @Operation(summary = "Create a new profile")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Profile created"),
-            @ApiResponse(responseCode = "400", description = "Bad request")})
-    public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
-        var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
-        var profile = profileCommandService.handle(createProfileCommand);
-        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
-        var createdProfile = profile.get();
-        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(createdProfile);
-        return new ResponseEntity<>(profileResource, HttpStatus.CREATED);
     }
 
     @GetMapping("/{profileId}")

@@ -1,6 +1,7 @@
-package nrg.inc.bykerz.assignments.application.external;
+package nrg.inc.bykerz.shared.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Owner;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.interfaces.acl.VehiclesContextFacade;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,8 @@ import java.util.Optional;
 
 @Service
 public class ExternalVehiclesService {
-    private final VehiclesContextFacade  vehiclesContextFacade;
+    private final VehiclesContextFacade vehiclesContextFacade;
+
     public ExternalVehiclesService(VehiclesContextFacade vehiclesContextFacade) {
         this.vehiclesContextFacade = vehiclesContextFacade;
     }
@@ -19,5 +21,17 @@ public class ExternalVehiclesService {
             throw new IllegalArgumentException("Owner not found for ownerId: " + ownerId);
         }
         return owner;
+    }
+
+    public Optional<Vehicle> fetchVehicleById(Long vehicleId){
+        try{
+            return vehiclesContextFacade.fetchVehicleById(vehicleId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Long createOwner(Long profileId) {
+        return vehiclesContextFacade.createOwner(profileId);
     }
 }

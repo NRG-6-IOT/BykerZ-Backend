@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.shared.application.outboundedservices;
+package nrg.inc.bykerz.profiles.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.interfaces.acl.IamContextFacade;

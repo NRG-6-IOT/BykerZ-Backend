@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.application.internal.acl;
+package nrg.inc.bykerz.iam.application.acl;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.domain.model.queries.GetUserByIdQuery;

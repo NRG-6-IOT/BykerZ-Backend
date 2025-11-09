@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.wellness.application.internal.commandservices;
 
-import nrg.inc.bykerz.wellness.application.internal.outboundservices.acl.ExternalVehicleService;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import nrg.inc.bykerz.wellness.domain.model.commands.CreateNotificationCommand;
 import nrg.inc.bykerz.wellness.domain.model.entities.Notification;
 import nrg.inc.bykerz.wellness.domain.services.NotificationCommandService;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 public class NotificationCommandServiceImpl implements NotificationCommandService {
 
     private final NotificationRepository notificationRepository;
-    private final ExternalVehicleService externalVehicleService;
+    private final ExternalVehiclesService externalVehicleService;
 
-    public NotificationCommandServiceImpl(NotificationRepository notificationRepository, ExternalVehicleService externalVehicleService) {
+    public NotificationCommandServiceImpl(NotificationRepository notificationRepository, ExternalVehiclesService externalVehicleService) {
         this.externalVehicleService = externalVehicleService;
         this.notificationRepository = notificationRepository;
     }

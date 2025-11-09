@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.iam.application.internal.commandservices;
 
-import nrg.inc.bykerz.iam.application.external.ExternalProfileService;
+import nrg.inc.bykerz.iam.application.internal.outboundservices.acl.ExternalProfileService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.hashing.HashingService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.tokens.TokenService;
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
@@ -138,7 +138,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
         var roles= signUpCommand.roles().stream().map(
                 role->roleRepository.findByName(role)
-                        .orElseThrow(() -> new IllegalArgumentException("Role " + role + " not found"))
+                        .orElseThrow(() -> new IllegalArgumentException("Role not found"))
                 ).toList();
         var user = new User(signUpCommand.username(), hashingService.encode(signUpCommand.password()), roles);
         userRepository.save(user);

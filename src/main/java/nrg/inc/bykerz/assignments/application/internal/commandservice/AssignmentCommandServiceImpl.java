@@ -1,6 +1,5 @@
 package nrg.inc.bykerz.assignments.application.internal.commandservice;
 
-import nrg.inc.bykerz.assignments.application.external.ExternalVehiclesService;
 import nrg.inc.bykerz.assignments.domain.model.aggregates.Assignment;
 import nrg.inc.bykerz.assignments.domain.model.commands.*;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentCode;
@@ -8,6 +7,7 @@ import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentStatus;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentCommandService;
 import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.AssignmentRepository;
 import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.MechanicRepository;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
