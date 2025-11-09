@@ -1,13 +1,13 @@
 package nrg.inc.bykerz.profiles.application.internal.commandservices;
 
+import nrg.inc.bykerz.profiles.application.internal.outboundservices.acl.ExternalIamService;
 import nrg.inc.bykerz.profiles.domain.model.aggregates.Profile;
 import nrg.inc.bykerz.profiles.domain.model.commands.CreateProfileCommand;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
-import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.profiles.domain.services.ProfileCommandService;
 import nrg.inc.bykerz.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
-import nrg.inc.bykerz.shared.application.outboundedservices.ExternalIamService;
 import nrg.inc.bykerz.assignments.domain.model.commands.CreateMechanicCommand;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateOwnerCommand;
 import nrg.inc.bykerz.assignments.domain.services.MechanicCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
@@ -20,16 +20,16 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     private final ProfileRepository profileRepository;
     private final ExternalIamService externalIamService;
     private final MechanicCommandService mechanicCommandService;
-    private final OwnerCommandService ownerCommandService;
+    private final ExternalVehiclesService externalVehicleService;
     public ProfileCommandServiceImpl(
             ProfileRepository profileRepository,
             ExternalIamService externalIamService,
             MechanicCommandService mechanicCommandService,
-            OwnerCommandService ownerCommandService) {
-        this.ownerCommandService = ownerCommandService;
+            ExternalVehiclesService externalVehicleService) {
         this.profileRepository = profileRepository;
         this.externalIamService = externalIamService;
         this.mechanicCommandService = mechanicCommandService;
+        this.externalVehicleService = externalVehicleService;
     }
 
     @Override
@@ -38,11 +38,6 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         var user = this.externalIamService.getUserById(command.userId());
         if (user.isEmpty()) {
             throw new IllegalArgumentException("User with given ID does not exist.");
-        }
-
-        var userId = new UserId(command.userId());
-        if (profileRepository.findByUserId(userId).isPresent()) {
-            throw new IllegalArgumentException("Profile for user ID already exists.");
         }
 
         var emailAddress = new EmailAddress(command.email());
@@ -61,8 +56,10 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         }
 
         if(user.get().getUserRoles().stream().anyMatch(role -> role.getName().name().equals("ROLE_OWNER"))) {
-            var owner = ownerCommandService.handle(new CreateOwnerCommand(profile.getId()));
-            if (owner.isEmpty()) {
+            var owner = externalVehicleService.createOwner(profile.getId());
+            if (owner == 0L) {
+                // Revert profile creation
+                profileRepository.deleteById(profile.getId());
                 throw new IllegalArgumentException("Could not create owner for profile.");
             }
         }
