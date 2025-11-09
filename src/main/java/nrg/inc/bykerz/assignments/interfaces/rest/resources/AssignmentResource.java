@@ -3,6 +3,8 @@ package nrg.inc.bykerz.assignments.interfaces.rest.resources;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.OwnerResource;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
 
+import java.util.Date;
+
 public record AssignmentResource(
         Long id,
         OwnerResource owner,
@@ -10,6 +12,6 @@ public record AssignmentResource(
         String type,
         String status,
         String assignmentCode,
-        String createdAt
+        Date createdAt
 ) {
 }

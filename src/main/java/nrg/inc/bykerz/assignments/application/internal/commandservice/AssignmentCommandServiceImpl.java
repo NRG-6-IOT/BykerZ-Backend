@@ -2,10 +2,7 @@ package nrg.inc.bykerz.assignments.application.internal.commandservice;
 
 import nrg.inc.bykerz.assignments.application.external.ExternalVehiclesService;
 import nrg.inc.bykerz.assignments.domain.model.aggregates.Assignment;
-import nrg.inc.bykerz.assignments.domain.model.commands.AssignOwnerToAssignmentCommand;
-import nrg.inc.bykerz.assignments.domain.model.commands.CreateAssignmentCommand;
-import nrg.inc.bykerz.assignments.domain.model.commands.UpdateAssignmentStatusCommand;
-import nrg.inc.bykerz.assignments.domain.model.commands.UpdateAssignmentTypeCommand;
+import nrg.inc.bykerz.assignments.domain.model.commands.*;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentCode;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentStatus;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentCommandService;
@@ -95,5 +92,29 @@ public class AssignmentCommandServiceImpl implements AssignmentCommandService {
         assignment.setOwnerId(ownerOpt.get().getId());
         var updatedAssignment = this.assignmentRepository.save(assignment);
         return Optional.of(updatedAssignment);
+    }
+
+    @Override
+    public void handle(DeleteAssignmentCommand command) {
+        var assignmentOpt = this.assignmentRepository.findById(command.assignmentId());
+        if(assignmentOpt.isEmpty()) {
+            throw new IllegalArgumentException("Assignment not found");
+        }
+        var assignment = assignmentOpt.get();
+
+        if(!assignment.getStatus().equals(AssignmentStatus.PENDING)) {
+            throw  new IllegalArgumentException("Assignment with id " + command.assignmentId() + " is not pending");
+        }
+
+        try {
+            var mechanic = this.assignmentRepository.findById(command.assignmentId()).get().getMechanic();
+            if (mechanic != null) {
+                mechanic.removeAssignment(assignment);
+                this.mechanicRepository.save(mechanic);
+            }
+            this.assignmentRepository.delete(assignment);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error deleting assignment: " + e.getMessage());
+        }
     }
 }

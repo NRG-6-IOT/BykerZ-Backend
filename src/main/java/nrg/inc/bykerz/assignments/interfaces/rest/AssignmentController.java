@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nrg.inc.bykerz.assignments.application.external.ExternalVehiclesService;
 import nrg.inc.bykerz.assignments.domain.model.commands.AssignOwnerToAssignmentCommand;
+import nrg.inc.bykerz.assignments.domain.model.commands.DeleteAssignmentCommand;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssigmentByCodeQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentCommandService;
@@ -151,5 +152,13 @@ public class AssignmentController {
         var owner = ownerOpt == null ? null : ownerOpt.get();
         var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(updatedAssignment, mechanic, owner);
         return ResponseEntity.ok(assignmentResource);
+    }
+
+    @DeleteMapping("{assignmentId}")
+    @Operation(summary = "Delete Assignment", description = "Delete an existing assignment by its ID")
+    public ResponseEntity<Void> deleteAssignment(@PathVariable Long assignmentId) {
+        var deleteAssignmentCommand = new DeleteAssignmentCommand(assignmentId);
+        this.assignmentCommandService.handle(deleteAssignmentCommand);
+        return ResponseEntity.noContent().build();
     }
 }

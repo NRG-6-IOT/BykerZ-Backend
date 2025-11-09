@@ -15,7 +15,7 @@ public class AssignmentResourceFromEntityAssembler {
                 entity.getType().toString(),
                 entity.getStatus().toString(),
                 entity.getAssignmentCode().code().toString(),
-                entity.getCreatedAt().toString()
+                entity.getCreatedAt()
         );
     }
 }
