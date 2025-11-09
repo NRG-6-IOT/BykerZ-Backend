@@ -14,4 +14,6 @@ public interface VehiclesContextFacade {
 
     Optional<Vehicle> fetchVehicleById(Long vehicleId);
 
+    Long createOwner(Long profileId);
+
 }
