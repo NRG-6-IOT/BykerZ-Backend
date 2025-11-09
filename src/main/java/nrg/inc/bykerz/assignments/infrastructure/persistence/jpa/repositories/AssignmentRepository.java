@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     Optional<Assignment> findByOwnerIdAndStatus(Long ownerId, AssignmentStatus status);
     List<Assignment> findByMechanic_Id(Long mechanicId);
+    List<Assignment> findByMechanic_IdAndStatusOrderByCreatedAtDesc(Long mechanicId, AssignmentStatus status);
     boolean existsByAssignmentCode(AssignmentCode code);
     boolean existsByOwnerIdAndIdNotAndStatusNot(Long ownerId, Long id, AssignmentStatus status);
     Optional<Assignment> findByAssignmentCode(AssignmentCode code);

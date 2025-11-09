@@ -34,13 +34,11 @@ public class AssignmentQueryServiceImpl implements AssignmentQueryService {
         try {
             status = AssignmentStatus.valueOf(query.status().toUpperCase());
         } catch (IllegalArgumentException e) {
-            // Manejo de error si el estado no es válido
             throw new RuntimeException("Invalid status: " + query.status(), e);
         }
 
-        return this.assignmentRepository.findByMechanic_Id(query.mechanicId()).stream()
-                .filter(assignment -> assignment.getStatus().equals(status))
-                .toList();
+        // Obtener las assignments ya ordenadas por createdAt desc para que las más recientes aparezcan primero
+        return this.assignmentRepository.findByMechanic_IdAndStatusOrderByCreatedAtDesc(query.mechanicId(), status);
     }
 
     @Override
