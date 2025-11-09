@@ -23,9 +23,4 @@ public class ExternalIamService {
         }
         return  Optional.of(userOpt.get());
     }
-
-    public Optional<UserId> createUser(String username, String password, List<String> roles) {
-        var userId = iamContextFacade.createUser(username, password, roles);
-        return userId == 0L ? Optional.empty() : Optional.of(new UserId(userId));
-    }
 }
