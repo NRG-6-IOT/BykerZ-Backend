@@ -2,7 +2,6 @@ package nrg.inc.bykerz.assignments.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nrg.inc.bykerz.assignments.application.external.ExternalVehiclesService;
 import nrg.inc.bykerz.assignments.domain.model.commands.AssignOwnerToAssignmentCommand;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssigmentByCodeQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
@@ -16,6 +15,7 @@ import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentStat
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.UpdateAssignmentTypeCommandFromResourceAssembler;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
