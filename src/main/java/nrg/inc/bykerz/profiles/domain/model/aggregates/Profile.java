@@ -70,4 +70,8 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     }
 
     public Long getUserId() { return this.userId.userId(); }
+
+    public String getCompleteName() {
+        return this.firstName + " " + this.lastName;
+    }
 }

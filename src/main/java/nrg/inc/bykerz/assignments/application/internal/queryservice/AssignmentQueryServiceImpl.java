@@ -25,7 +25,7 @@ public class AssignmentQueryServiceImpl implements AssignmentQueryService {
 
     @Override
     public Optional<Assignment> handle(GetAssignmentByOwnerIdQuery query) {
-        return this.assignmentRepository.findByOwnerId(query.ownerId());
+        return this.assignmentRepository.findByOwnerIdAndStatus(query.ownerId(), AssignmentStatus.ACTIVE);
     }
 
     @Override

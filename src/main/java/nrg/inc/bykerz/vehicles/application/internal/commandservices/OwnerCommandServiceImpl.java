@@ -43,7 +43,7 @@ public class OwnerCommandServiceImpl implements OwnerCommandService {
             return Optional.empty();
         }
         var profile = profileOpt.get();
-        var owner = new Owner(profile.getId());
+        var owner = new Owner(profile);
         var savedOwner = ownerRepository.save(owner);
         return Optional.of(savedOwner);
     }
