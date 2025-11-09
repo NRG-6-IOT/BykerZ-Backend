@@ -14,7 +14,9 @@ import java.util.List;
 @Getter
 public class Owner extends AuditableAbstractAggregateRoot<Owner> {
 
-    private Long profileId;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    private Profile profile;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "owner")
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -22,8 +24,8 @@ public class Owner extends AuditableAbstractAggregateRoot<Owner> {
     protected Owner() {
     }
 
-    public Owner(Long profileId) {
-        this.profileId = profileId;
+    public Owner(Profile profile) {
+        this.profile = profile;
     }
 
     public Vehicle AddVehicle(Model model, String year, String plate) {

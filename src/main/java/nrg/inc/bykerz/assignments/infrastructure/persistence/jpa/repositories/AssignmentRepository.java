@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
-    Optional<Assignment> findByOwnerId(Long ownerId);
+    Optional<Assignment> findByOwnerIdAndStatus(Long ownerId, AssignmentStatus status);
     List<Assignment> findByMechanic_Id(Long mechanicId);
     boolean existsByAssignmentCode(AssignmentCode code);
     boolean existsByOwnerIdAndIdNotAndStatusNot(Long ownerId, Long id, AssignmentStatus status);
