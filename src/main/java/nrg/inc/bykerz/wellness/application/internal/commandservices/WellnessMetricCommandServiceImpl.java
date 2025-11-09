@@ -1,7 +1,6 @@
 package nrg.inc.bykerz.wellness.application.internal.commandservices;
 
-import aj.org.objectweb.asm.commons.TryCatchBlockSorter;
-import nrg.inc.bykerz.wellness.application.internal.outboundservices.acl.ExternalVehicleService;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import nrg.inc.bykerz.wellness.domain.model.aggregates.WellnessMetric;
 import nrg.inc.bykerz.wellness.domain.model.commands.CreateWellnessMetricCommand;
 import nrg.inc.bykerz.wellness.domain.model.commands.DeleteWellnessMetricCommand;
@@ -18,9 +17,9 @@ public class WellnessMetricCommandServiceImpl implements WellnessMetricCommandSe
 
     private final WellnessMetricRepository wellnessMetricRepository;
     private final WellnessMonitoringService wellnessMonitoringService;
-    private final ExternalVehicleService externalVehicleService;
+    private final ExternalVehiclesService externalVehicleService;
 
-    public WellnessMetricCommandServiceImpl(WellnessMetricRepository wellnessMetricRepository, WellnessMonitoringService WellnessMonitoringService, ExternalVehicleService externalVehicleService) {
+    public WellnessMetricCommandServiceImpl(WellnessMetricRepository wellnessMetricRepository, WellnessMonitoringService WellnessMonitoringService, ExternalVehiclesService externalVehicleService) {
         this.wellnessMetricRepository = wellnessMetricRepository;
         this.wellnessMonitoringService =  WellnessMonitoringService;
         this.externalVehicleService = externalVehicleService;
