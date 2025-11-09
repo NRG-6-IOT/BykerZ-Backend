@@ -1,9 +1,11 @@
-package nrg.inc.bykerz.shared.application.outboundedservices;
+package nrg.inc.bykerz.profiles.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.interfaces.acl.IamContextFacade;
+import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +22,10 @@ public class ExternalIamService {
             return Optional.empty();
         }
         return  Optional.of(userOpt.get());
+    }
+
+    public Optional<UserId> createUser(String username, String password, List<String> roles) {
+        var userId = iamContextFacade.createUser(username, password, roles);
+        return userId == 0L ? Optional.empty() : Optional.of(new UserId(userId));
     }
 }
