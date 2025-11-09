@@ -27,28 +27,6 @@ public class IamContextFacadeImpl implements IamContextFacade {
     }
 
     @Override
-    public Long createUser(String username, String password, List<String> roles) {
-        List<String> roleNames = roles == null ? Collections.emptyList() : roles;
-
-        List<Role> roleEntities = roleNames.stream()
-                .filter(n -> n != null && !n.isBlank())
-                .map(n -> {
-                    try {
-                        return new Role(Roles.valueOf(n.trim().toUpperCase()));
-                    } catch (IllegalArgumentException ex) {
-                        return Role.getDefaultRole();
-                    }
-                })
-                .collect(Collectors.toList());
-
-        roleEntities = Role.validateRoleSet(roleEntities);
-
-        var createUserCommand = new CreateUserCommand(username, password, roleEntities);
-        var user = userCommandService.handle(createUserCommand);
-        return user.isEmpty() ? Long.valueOf(0L) : user.get().getId();
-    }
-
-    @Override
     public Optional<User> fetchUserById(Long userId) {
         if( userId == null || userId <= 0) {
             return Optional.empty();
