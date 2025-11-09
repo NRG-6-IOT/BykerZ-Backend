@@ -2,10 +2,8 @@ package nrg.inc.bykerz.profiles.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.interfaces.acl.IamContextFacade;
-import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

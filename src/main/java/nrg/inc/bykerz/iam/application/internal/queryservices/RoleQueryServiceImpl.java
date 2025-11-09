@@ -7,7 +7,6 @@ import nrg.inc.bykerz.iam.infrastructure.persistence.jpa.repositories.RoleReposi
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoleQueryServiceImpl implements RoleQueryService {

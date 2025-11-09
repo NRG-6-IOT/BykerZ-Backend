@@ -12,7 +12,6 @@ import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.profiles.domain.services.ProfileQueryService;
 import nrg.inc.bykerz.profiles.interfaces.rest.resources.ProfileResource;
 import nrg.inc.bykerz.profiles.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
