@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface VehicleReadRepository extends JpaRepository<Vehicle, Long> {
     boolean existsByPlate(Plate plate);
     Optional<Vehicle> findByPlate(Plate plate);
-    List<Vehicle> findByOwnerId(Long ownerId);
 }

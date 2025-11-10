@@ -4,9 +4,9 @@ import nrg.inc.bykerz.vehicles.domain.model.commands.AddVehicleToOwnerCommand;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.AddVehicleResource;
 
 public class AddVehicleCommandFromResourceAssembler {
-    public static AddVehicleToOwnerCommand toCommandFromResource(AddVehicleResource resource) {
+    public static AddVehicleToOwnerCommand toCommandFromResource(Long ownerId, AddVehicleResource resource) {
         return new AddVehicleToOwnerCommand(
-                resource.ownerId(),
+                ownerId,
                 resource.modelId(),
                 resource.year(),
                 resource.plate()

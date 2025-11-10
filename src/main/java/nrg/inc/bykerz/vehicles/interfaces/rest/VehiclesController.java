@@ -49,22 +49,38 @@ public class VehiclesController {
         return ResponseEntity.ok(vehicleResources);
     }
 
+    @GetMapping("/{vehicleId}")
+    @Operation(summary = "Get vehicle by ID", description = "Retrieve a vehicle using its unique ID")
+    public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long vehicleId) {
+        var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicleOpt.get());
+        return ResponseEntity.ok(vehicleResource);
+    }
+
     @PostMapping("/{ownerId}")
     @Operation(summary = "Add a new vehicle to an owner", description = "Create and associate a new vehicle with a specific owner ID")
-    public ResponseEntity<VehicleResource> addVehicleToOwner(@PathVariable Long ownerId, @RequestBody AddVehicleResource resource) {
+    public ResponseEntity<VehicleResource> addVehicleToOwner(
+            @PathVariable Long ownerId,
+            @RequestBody AddVehicleResource resource
+    ) {
         var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
         if (ownerOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        var command = AddVehicleCommandFromResourceAssembler.toCommandFromResource(resource);
+
+        var command = AddVehicleCommandFromResourceAssembler.toCommandFromResource(ownerId, resource);
         var vehicleOpt = ownerCommandService.handle(command);
         if (vehicleOpt.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        var vehicle = vehicleOpt.get();
-        var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle);
+
+        var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicleOpt.get());
         return ResponseEntity.ok(vehicleResource);
     }
+
 
     @DeleteMapping("/{vehicleId}")
     @Operation(summary = "Delete a vehicle by ID", description = "Remove a vehicle from the system using its unique ID")

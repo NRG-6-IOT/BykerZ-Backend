@@ -66,11 +66,16 @@ public class OwnerCommandServiceImpl implements OwnerCommandService {
         }
 
         var ownerEntity = owner.get();
-        var vehicle = ownerEntity.AddVehicle(model.get(), command.year(), command.plate());
+        ownerEntity.AddVehicle(model.get(), command.year(), command.plate());
 
         try {
-            ownerRepository.save(ownerEntity);
-            return Optional.of(vehicle);
+            var savedOwner = ownerRepository.saveAndFlush(ownerEntity);
+            var savedVehicle = savedOwner.GetVehicles()
+                    .stream()
+                    .filter(v -> v.getPlate().equals(new Plate(command.plate())))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Vehicle not found after saving"));
+            return Optional.of(savedVehicle);
         } catch (Exception e) {
             throw new RuntimeException("Could not save vehicle to owner: " + e.getMessage(), e);
         }
@@ -78,26 +83,38 @@ public class OwnerCommandServiceImpl implements OwnerCommandService {
 
     @Override
     public Optional<Vehicle> handle(UpdateVehicleFromOwnerCommand command) {
-        var plateExists = vehicleReadRepository.existsByPlate(new Plate(command.plate()));
-        if (plateExists) {
-            throw new IllegalArgumentException("Vehicle with given plate already exists.");
-        }
-
-        var owner = ownerRepository.findById(command.ownerId());
-        if (owner.isEmpty()) {
+        var ownerOpt = ownerRepository.findById(command.ownerId());
+        if (ownerOpt.isEmpty()) {
             throw new IllegalArgumentException("Owner with given ID does not exist.");
         }
 
-        var ownerEntity = owner.get();
-        var vehicle = ownerEntity.UpdateVehicle(command);
+        var owner = ownerOpt.get();
+        var vehicle = owner.UpdateVehicle(command);
+
+        if (vehicle == null) {
+            throw new IllegalArgumentException("Vehicle with given ID does not exist for this owner.");
+        }
+
+        var existingVehicle = vehicleReadRepository.findByPlate(new Plate(command.plate()));
+        if (existingVehicle.isPresent() && !existingVehicle.get().getId().equals(vehicle.getId())) {
+            throw new IllegalArgumentException("Another vehicle with the given plate already exists.");
+        }
 
         try {
-            ownerRepository.save(ownerEntity);
-            return Optional.of(vehicle);
+            var savedOwner = ownerRepository.saveAndFlush(owner);
+            var savedVehicle = savedOwner.GetVehicles()
+                    .stream()
+                    .filter(v -> v.getId().equals(vehicle.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Vehicle not found after update."));
+
+            return Optional.of(savedVehicle);
+
         } catch (Exception e) {
-            throw new RuntimeException("Could not update vehicle to owner: " + e.getMessage(), e);
+            throw new RuntimeException("Could not update vehicle for owner: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     public void handle(DeleteVehicleFromOwnerCommand command) {
