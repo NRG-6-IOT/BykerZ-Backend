@@ -5,7 +5,6 @@ import nrg.inc.bykerz.vehicles.domain.model.commands.CreateOwnerCommand;
 import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerQueryService;
 import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
@@ -35,7 +34,11 @@ public class VehiclesContextFacadeImpl implements VehiclesContextFacade {
 
     @Override
     public List<Vehicle> fetchVehiclesByOwnerId(Long ownerId) {
-        return vehiclesQueryService.handle(new GetVehiclesByOwnerIdQuery(ownerId));
+        var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
+        if (ownerOpt.isEmpty()) {
+            return List.of();
+        }
+        return ownerOpt.get().GetVehicles();
     }
 
     @Override
