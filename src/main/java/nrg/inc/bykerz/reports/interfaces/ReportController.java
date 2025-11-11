@@ -35,4 +35,50 @@ public class ReportController {
         return ResponseEntity.ok(reportOpt.get());
     }
 
+    @GetMapping(value = "/vehicle/{vehicleId}/export", produces = "text/csv")
+    @Operation(summary = "Export aggregated report by vehicle ID as CSV")
+    public ResponseEntity<String> exportReportByVehicleId(@PathVariable Long vehicleId) {
+        var reportOpt = reportsQueryService.handle(new GetReportByVehicleIdQuery(vehicleId));
+        if (reportOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var report = reportOpt.get();
+
+        StringBuilder csv = new StringBuilder();
+        csv.append("Section,Field,Value\n");
+
+        // Vehicle section
+        var vehicle = report.vehicle();
+        csv.append("Vehicle,Model,").append(vehicle.model().name()).append("\n");
+        csv.append("Vehicle,Brand,").append(vehicle.model().brand()).append("\n");
+        csv.append("Vehicle,Model Year,").append(vehicle.model().modelYear()).append("\n");
+        csv.append("Vehicle,Type,").append(vehicle.model().type()).append("\n");
+        csv.append("Vehicle,Displacement,").append(vehicle.model().displacement()).append("\n");
+        csv.append("Vehicle,Potency,").append(vehicle.model().potency()).append("\n");
+        csv.append("Vehicle,Engine Type,").append(vehicle.model().engineType()).append("\n");
+        csv.append("Vehicle,Weight,").append(vehicle.model().weight()).append("\n");
+
+        // Assignment section
+        if (report.assignment() != null) {
+            csv.append("Assignment,Mechanic Name,").append(report.assignment().mechanic().completeName()).append("\n");
+            csv.append("Assignment,Status,").append(report.assignment().status()).append("\n");
+            csv.append("Assignment,Type,").append(report.assignment().type()).append("\n");
+        }
+
+        // Maintenances section
+        if (report.maintenances() != null && !report.maintenances().isEmpty()) {
+            for (var m : report.maintenances()) {
+                csv.append("Maintenance,Date,").append(m.dateOfService()).append("\n");
+                csv.append("Maintenance,Location,").append(m.location()).append("\n");
+                csv.append("Maintenance,Description,").append(m.description()).append("\n");
+                csv.append("Maintenance,State,").append(m.state()).append("\n");
+            }
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=vehicle-report-" + vehicleId + ".csv")
+                .body(csv.toString());
+    }
+
 }
