@@ -20,7 +20,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "address", column = @Column(name = "email_address"))})
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
     private EmailAddress emailAddress;
 
     @Getter
