@@ -90,6 +90,9 @@ public class AssignmentCommandServiceImpl implements AssignmentCommandService {
         }
 
         assignment.setOwnerId(ownerOpt.get().getId());
+
+        assignment.setStatus(AssignmentStatus.ACTIVE);
+
         var updatedAssignment = this.assignmentRepository.save(assignment);
         return Optional.of(updatedAssignment);
     }
