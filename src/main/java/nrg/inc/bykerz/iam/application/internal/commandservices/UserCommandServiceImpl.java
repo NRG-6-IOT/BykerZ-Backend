@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.iam.application.internal.commandservices;
 
-import nrg.inc.bykerz.iam.application.internal.outboundservices.acl.ExternalProfileService;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalProfileService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.hashing.HashingService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.tokens.TokenService;
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
