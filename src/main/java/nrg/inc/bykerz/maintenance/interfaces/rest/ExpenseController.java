@@ -6,6 +6,7 @@ import nrg.inc.bykerz.iam.domain.model.queries.GetUserByUsernameQuery;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.maintenance.application.internal.commandservices.ExpenseItemCommandServiceImpl;
 import nrg.inc.bykerz.maintenance.domain.model.commands.AddExpenseItemCommand;
+import nrg.inc.bykerz.maintenance.domain.model.commands.CreateExpenseByOwnerIdCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.CreateExpenseCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteExpenseCommand;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllExpensesByUserIdQuery;
@@ -59,6 +60,49 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseResources);
 
 
+    }
+
+    @PostMapping("/owner/{ownerId}")
+    @Operation(summary = "Create new Expense By Owner Id", description = "Create a new expense for an owner" )
+    public ResponseEntity<ExpenseResource> createExpenseByOwnerId(
+            @RequestBody CreateExpenseResource resource,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long ownerId
+    ){
+        var createExpenseByOwnerIdCommand = new CreateExpenseByOwnerIdCommand(
+                resource.name(),
+                resource.finalPrice(),
+                ownerId,
+                resource.expenseType()
+        );
+
+        var expense = expenseCommandService.handle(createExpenseByOwnerIdCommand);
+
+        if (expense.isEmpty()) {return ResponseEntity.badRequest().build();}
+
+        resource.items().forEach(item -> {
+            try  {
+                var addExpenseItemCommand = new AddExpenseItemCommand(
+                        expense.get().getId(),
+                        item.name(),
+                        item.amount(),
+                        item.unitPrice(),
+                        item.totalPrice(),
+                        item.itemType()
+                );
+
+                var expenseItem = expenseItemCommandService.handle(addExpenseItemCommand);
+
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error while creating expense item: " + e);
+            }
+        });
+
+        var createdExpense = expenseQueryService.handle(new GetExpenseByIdQuery(expense.get().getId()));
+
+        var expenseResource = ExpenseResourceFromEntityAssembler.toResourceFromEntity(createdExpense.get());
+
+        return ResponseEntity.ok(expenseResource);
     }
 
 
