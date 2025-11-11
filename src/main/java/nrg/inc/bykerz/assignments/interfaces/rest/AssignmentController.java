@@ -170,6 +170,11 @@ public class AssignmentController {
             return ResponseEntity.notFound().build();
         }
         var assignment = assignmentOpt.get();
+
+        if(assignment.getStatus().toString() != "PENDING") {
+            return ResponseEntity.notFound().build();
+        }
+        
         var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
         if (mechanicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
