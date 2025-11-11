@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalProfileService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.OwnerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,12 +38,14 @@ public class UserController {
     private final UserQueryService userQueryService;
     private final OwnerRepository ownerRepository;
     private final MechanicRepository mechanicRepository;
+    private final ExternalProfileService externalProfileService;
 
-    public UserController(UserCommandService userCommandService, UserQueryService userQueryService, OwnerRepository ownerRepository, MechanicRepository mechanicRepository) {
+    public UserController(UserCommandService userCommandService, UserQueryService userQueryService, OwnerRepository ownerRepository, MechanicRepository mechanicRepository, ExternalProfileService externalProfileService) {
         this.userCommandService = userCommandService;
         this.userQueryService = userQueryService;
         this.ownerRepository = ownerRepository;
         this.mechanicRepository = mechanicRepository;
+        this.externalProfileService = externalProfileService;
     }
 
     private Long getUserIdFromContext() {
@@ -210,7 +213,10 @@ public class UserController {
         if (user.isEmpty()) {return ResponseEntity.notFound().build();}
         var userId = user.get().getId();
 
-        var owner = ownerRepository.findOwnerByProfile_Id(userId);
+        var profileId = externalProfileService.getProfileIdByUserId(userId);
+        if (profileId == 0L) {return ResponseEntity.notFound().build();}
+
+        var owner = ownerRepository.findOwnerByProfile_Id(profileId);
 
         if (owner.isEmpty()) {return ResponseEntity.notFound().build();}
 
@@ -226,7 +232,10 @@ public class UserController {
         if (user.isEmpty()) {return ResponseEntity.notFound().build();}
         var userId = user.get().getId();
 
-        var mechanic = mechanicRepository.getMechanicByProfile_Id(userId);
+        var profileId = externalProfileService.getProfileIdByUserId(userId);
+        if (profileId == 0L) {return ResponseEntity.notFound().build();}
+
+        var mechanic = mechanicRepository.getMechanicByProfile_Id(profileId);
 
         if (mechanic.isEmpty()) {return ResponseEntity.notFound().build();}
 
