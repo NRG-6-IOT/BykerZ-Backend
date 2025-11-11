@@ -161,4 +161,28 @@ public class AssignmentController {
         this.assignmentCommandService.handle(deleteAssignmentCommand);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("code/{assignmentCode}")
+    @Operation(summary = "Get Assignment by Code", description = "Retrieve an assignment by its code")
+    public ResponseEntity<AssignmentResource> getAssignmentByCode(@PathVariable String assignmentCode) {
+        var assignmentOpt = this.assignmentQueryService.handle(new GetAssigmentByCodeQuery(assignmentCode));
+        if (assignmentOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var assignment = assignmentOpt.get();
+        var mechanicOpt = this.mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
+        if (mechanicOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var mechanic = mechanicOpt.get();
+        var ownerOpt = assignment.getOwnerId() == null ? null : this.externalVehiclesService.getOwnerById(assignment.getOwnerId());
+        if(ownerOpt != null) {
+            if (ownerOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        var owner = ownerOpt == null ? null : ownerOpt.get();
+        var assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanic, owner);
+        return ResponseEntity.ok(assignmentResource);
+    }
 }
