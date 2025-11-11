@@ -88,7 +88,10 @@ public class WebSecurityConfiguration {
                                 "/",
                                 "/index.html",
                                 "/favicon.ico",
-                                "/error"
+                                "/error",
+                                "/ws-wellness/**",
+                                "/topic/**",
+                                "/app/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
