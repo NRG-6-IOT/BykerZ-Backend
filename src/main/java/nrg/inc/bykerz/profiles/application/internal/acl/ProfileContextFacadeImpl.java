@@ -15,7 +15,7 @@ public class ProfileContextFacadeImpl implements ProfileContextFacade {
 
     @Override
     public Long createProfile(String firstName, String lastName, String email, String photoUrl, Long userId) {
-        var createProfileCommand = new CreateProfileCommand(email, firstName, lastName, photoUrl, userId);
+        var createProfileCommand = new CreateProfileCommand(firstName, lastName, email, photoUrl, userId);
         var profile = profileCommandService.handle(createProfileCommand);
         return profile.isEmpty() ? Long.valueOf(0L) : profile.get().getId();
     }
