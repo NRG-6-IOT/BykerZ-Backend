@@ -2,7 +2,6 @@ package nrg.inc.bykerz.assignments.application.internal.queryservice;
 
 import nrg.inc.bykerz.assignments.domain.model.aggregates.Mechanic;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
-import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentCode;
 import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
 import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.MechanicRepository;
 import org.springframework.stereotype.Service;
