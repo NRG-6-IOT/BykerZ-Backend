@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface MechanicRepository extends JpaRepository<Mechanic, Long> {
 
+    Optional<Mechanic> getMechanicByProfile_Id(Long profileId);
 }

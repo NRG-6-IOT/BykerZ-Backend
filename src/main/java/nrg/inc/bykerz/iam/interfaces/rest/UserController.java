@@ -1,11 +1,15 @@
 package nrg.inc.bykerz.iam.interfaces.rest;
 
+import nrg.inc.bykerz.assignments.domain.model.aggregates.Mechanic;
+import nrg.inc.bykerz.assignments.infrastructure.persistence.jpa.repositories.MechanicRepository;
 import nrg.inc.bykerz.iam.domain.model.commands.DeleteUserCommand;
 import nrg.inc.bykerz.iam.domain.model.commands.UpdateUserCommand;
 import nrg.inc.bykerz.iam.domain.model.queries.*;
 import nrg.inc.bykerz.iam.domain.services.UserCommandService;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.iam.infrastructure.authorization.sfs.model.UserDetailsImpl;
+import nrg.inc.bykerz.iam.interfaces.rest.resources.MechanicIdResource;
+import nrg.inc.bykerz.iam.interfaces.rest.resources.OwnerIdResource;
 import nrg.inc.bykerz.iam.interfaces.rest.resources.UpdateUserResource;
 import nrg.inc.bykerz.iam.interfaces.rest.resources.UserResource;
 import nrg.inc.bykerz.iam.interfaces.rest.transform.UpdateUserCommandFromResourceAssembler;
@@ -14,8 +18,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.OwnerRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,11 +35,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserController {
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+    private final OwnerRepository ownerRepository;
+    private final MechanicRepository mechanicRepository;
 
-
-    public UserController(UserCommandService userCommandService, UserQueryService userQueryService) {
+    public UserController(UserCommandService userCommandService, UserQueryService userQueryService, OwnerRepository ownerRepository, MechanicRepository mechanicRepository) {
         this.userCommandService = userCommandService;
         this.userQueryService = userQueryService;
+        this.ownerRepository = ownerRepository;
+        this.mechanicRepository = mechanicRepository;
     }
 
     private Long getUserIdFromContext() {
@@ -190,6 +200,39 @@ public class UserController {
             return ResponseEntity.status(401).build(); // Si no hay usuario autenticado
         }
     }
+
+    @GetMapping("/owner")
+    @Operation(summary = "Get Owner ID of an user", description =  "Retrieves the Owner ID associated with a user")
+    public ResponseEntity<OwnerIdResource> getOwnerIdOfUser(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        var getUserByUsernameQuery = new GetUserByUsernameQuery(username);
+        var user = userQueryService.handle(getUserByUsernameQuery);
+        if (user.isEmpty()) {return ResponseEntity.notFound().build();}
+        var userId = user.get().getId();
+
+        var owner = ownerRepository.findOwnerByProfile_Id(userId);
+
+        if (owner.isEmpty()) {return ResponseEntity.notFound().build();}
+
+        return ResponseEntity.ok(new OwnerIdResource(owner.get().getId()));
+    }
+
+    @GetMapping("/mechanic")
+    @Operation(summary = "Get Mechanic ID of an user", description =  "Retrieves the Mechanic ID associated with a user")
+    public ResponseEntity<MechanicIdResource> getMechanicIdOfUser(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        var getUserByUsernameQuery = new GetUserByUsernameQuery(username);
+        var user = userQueryService.handle(getUserByUsernameQuery);
+        if (user.isEmpty()) {return ResponseEntity.notFound().build();}
+        var userId = user.get().getId();
+
+        var mechanic = mechanicRepository.getMechanicByProfile_Id(userId);
+
+        if (mechanic.isEmpty()) {return ResponseEntity.notFound().build();}
+
+        return ResponseEntity.ok(new MechanicIdResource(mechanic.get().getId()));
+    }
+
 
 
 }
