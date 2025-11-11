@@ -1,4 +1,4 @@
-package nrg.inc.bykerz.iam.application.internal.outboundservices.acl;
+package nrg.inc.bykerz.shared.application.internal.outboundservices.acl;
 
 import nrg.inc.bykerz.profiles.interfaces.acl.ProfileContextFacade;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,10 @@ public class ExternalProfileService {
 
     public Long createProfile(String firstName, String lastName, String email, String photoUrl, Long userId) {
         return profileContextFacade.createProfile(firstName, lastName, email, photoUrl, userId);
+    }
+
+    public Long getProfileIdByUserId(Long userId) {
+        return profileContextFacade.getProfileIdByUserId(userId);
     }
 
 
