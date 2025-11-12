@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByEmailQuery;
 import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByIdQuery;
 import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByUserId;
+import nrg.inc.bykerz.profiles.domain.model.queries.GetProfileByUsernameQuery;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.EmailAddress;
 import nrg.inc.bykerz.profiles.domain.model.valueobjects.UserId;
 import nrg.inc.bykerz.profiles.domain.services.ProfileQueryService;
@@ -14,6 +15,8 @@ import nrg.inc.bykerz.profiles.interfaces.rest.resources.ProfileResource;
 import nrg.inc.bykerz.profiles.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -69,4 +72,20 @@ public class ProfilesController {
         var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profileEntity);
         return ResponseEntity.ok(profileResource);
     }
+
+    @GetMapping("/user")
+    @Operation(summary = "Get a profile by authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile found"),
+            @ApiResponse(responseCode = "404", description = "Profile not found")})
+    public ResponseEntity<ProfileResource> getProfileByAuthenticatedUser(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        var getProfileByUsernameQuery = new GetProfileByUsernameQuery(username);
+        var profile = profileQueryService.handle(getProfileByUsernameQuery);
+        if (profile.isEmpty()) return ResponseEntity.notFound().build();
+        var profileEntity = profile.get();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profileEntity);
+        return ResponseEntity.ok(profileResource);
+    }
+
 }
