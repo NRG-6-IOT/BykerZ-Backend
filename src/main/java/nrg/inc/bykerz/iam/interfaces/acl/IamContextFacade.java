@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface IamContextFacade {
     Optional<User> fetchUserById(Long userId);
+
+    Optional<User> fetchUserByUsername(String username);
 }

@@ -2,6 +2,7 @@ package nrg.inc.bykerz.iam.application.acl;
 
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
 import nrg.inc.bykerz.iam.domain.model.queries.GetUserByIdQuery;
+import nrg.inc.bykerz.iam.domain.model.queries.GetUserByUsernameQuery;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.iam.interfaces.acl.IamContextFacade;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,15 @@ public class IamContextFacadeImpl implements IamContextFacade {
             return Optional.empty();
         }
         return Optional.of(result.get());
+    }
+
+    @Override
+    public Optional<User> fetchUserByUsername(String username) {
+        var getUserByUsernameQuery = new GetUserByUsernameQuery(username);
+        var user = userQueryService.handle(getUserByUsernameQuery);
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(user.get());
     }
 }
