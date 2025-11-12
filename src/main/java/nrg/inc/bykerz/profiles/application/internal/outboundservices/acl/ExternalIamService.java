@@ -21,4 +21,8 @@ public class ExternalIamService {
         }
         return  Optional.of(userOpt.get());
     }
+
+    public Optional<User> getUserByUsername(String username) {
+        return iamContextFacade.fetchUserByUsername(username);
+    }
 }
