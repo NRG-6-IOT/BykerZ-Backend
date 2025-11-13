@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
+/*
 @Getter
 @Entity
 public class MetricType extends AuditableAbstractAggregateRoot<MetricType> {
@@ -39,3 +40,4 @@ public class MetricType extends AuditableAbstractAggregateRoot<MetricType> {
         return this.metricTypeId;
     }
 }
+*/

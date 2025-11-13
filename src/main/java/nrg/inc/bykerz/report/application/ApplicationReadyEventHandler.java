@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+/*
 @Component
 public class ApplicationReadyEventHandler implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -46,3 +47,4 @@ public class ApplicationReadyEventHandler implements ApplicationListener<Applica
         return System.currentTimeMillis();
     }
 }
+*/

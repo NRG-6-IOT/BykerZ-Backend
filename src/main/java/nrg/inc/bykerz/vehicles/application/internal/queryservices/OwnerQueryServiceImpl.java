@@ -34,9 +34,4 @@ public class OwnerQueryServiceImpl implements OwnerQueryService {
     public List<Owner> handle(GetAllOwnersQuery query) {
         return this.ownerRepository.findAll();
     }
-
-    @Override
-    public Optional<Owner> handle(GetOwnerByVehicleIdQuery query) {
-        return this.ownerRepository.findOwnerByVehicles_Id(query.vehicleId());
-    }
 }

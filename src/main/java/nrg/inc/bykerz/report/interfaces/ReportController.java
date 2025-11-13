@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
 
 @RestController
 @RequestMapping("/api/v1/reports")
@@ -57,3 +58,5 @@ public class ReportController {
         return ResponseEntity.ok(metrics);
     }
 }
+
+ */

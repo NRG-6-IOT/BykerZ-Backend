@@ -1,10 +1,7 @@
 package nrg.inc.bykerz.assignments.application.internal.queryservice;
 
 import nrg.inc.bykerz.assignments.domain.model.aggregates.Assignment;
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssigmentByCodeQuery;
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByIdQuery;
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByOwnerIdQuery;
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentsByMechanicIdAndStatusQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.*;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentCode;
 import nrg.inc.bykerz.assignments.domain.model.valueobjects.AssignmentStatus;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
@@ -50,5 +47,10 @@ public class AssignmentQueryServiceImpl implements AssignmentQueryService {
     public Optional<Assignment> handle(GetAssigmentByCodeQuery query) {
         var code = new AssignmentCode(query.assignmentCode());
         return this.assignmentRepository.findByAssignmentCode(code);
+    }
+
+    @Override
+    public Optional<Assignment> handle(GetAssignmentByVehicleIdQuery getAssignmentByVehicleIdQuery) {
+        return Optional.empty();
     }
 }

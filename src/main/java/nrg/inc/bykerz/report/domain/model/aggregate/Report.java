@@ -1,5 +1,5 @@
 package nrg.inc.bykerz.report.domain.model.aggregate;
-
+/*
 import jakarta.persistence.*;
 import lombok.Getter;
 import nrg.inc.bykerz.report.domain.model.entities.Metric;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
 
 @Entity
 public class Report extends AuditableAbstractAggregateRoot<Report> {
@@ -62,3 +63,4 @@ public class Report extends AuditableAbstractAggregateRoot<Report> {
         return this.metrics.removeIf(m -> Objects.equals(m.metricId(), metricId));
     }
 }
+*/

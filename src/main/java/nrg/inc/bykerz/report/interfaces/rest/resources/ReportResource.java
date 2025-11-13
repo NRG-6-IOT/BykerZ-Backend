@@ -1,5 +1,5 @@
 package nrg.inc.bykerz.report.interfaces.rest.resources;
-
+/*
 import lombok.Getter;
 import lombok.Setter;
 import nrg.inc.bykerz.report.domain.model.entities.Metric;
@@ -44,3 +44,4 @@ public class ReportResource {
     }
 }
 
+*/

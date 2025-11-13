@@ -1,15 +1,15 @@
 package nrg.inc.bykerz.reports.application.queryservices;
 
 import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByVehicleIdQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
+import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
 import nrg.inc.bykerz.assignments.interfaces.rest.resources.AssignmentResource;
 import nrg.inc.bykerz.assignments.interfaces.rest.transform.AssignmentResourceFromEntityAssembler;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByVehicleIdQuery;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceQueryService;
 import nrg.inc.bykerz.maintenance.interfaces.rest.resources.MaintenanceResource;
 import nrg.inc.bykerz.maintenance.interfaces.rest.transform.MaintenanceResourceFromEntityAssembler;
-import nrg.inc.bykerz.shared.domain.model.queries.GetMechanicByIdQuery;
-import nrg.inc.bykerz.shared.domain.services.MechanicQueryService;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+/*
 @Service
 public class ReportsQueryServiceImpl implements ReportsQueryService {
 
@@ -46,6 +46,7 @@ public class ReportsQueryServiceImpl implements ReportsQueryService {
         this.mechanicQueryService = mechanicQueryService;
     }
 
+
     @Override
     public Optional<ReportResource> handle(GetReportByVehicleIdQuery query) {
         Long vehicleId = query.vehicleId();
@@ -66,13 +67,14 @@ public class ReportsQueryServiceImpl implements ReportsQueryService {
 
         AssignmentResource assignmentResource = null;
         var assignmentOpt = assignmentQueryService.handle(new GetAssignmentByVehicleIdQuery(vehicleId));
+
         if (assignmentOpt.isPresent()) {
             var assignment = assignmentOpt.get();
-            var mechanicOpt = mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanicId()));
+            var mechanicOpt = mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
             if (mechanicOpt.isPresent()) {
-                assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanicOpt.get());
+                // assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanicOpt.get());
             } else {
-                LOGGER.debug("ReportsQueryService: assignment found for vehicleId={} but mechanic id={} not found", vehicleId, assignment.getMechanicId());
+                //LOGGER.debug("ReportsQueryService: assignment found for vehicleId={} but mechanic id={} not found", vehicleId, assignment.getMechanicId());
             }
         } else {
             LOGGER.debug("ReportsQueryService: no assignment for vehicleId={}", vehicleId);
@@ -83,3 +85,4 @@ public class ReportsQueryServiceImpl implements ReportsQueryService {
     }
 }
 
+*/

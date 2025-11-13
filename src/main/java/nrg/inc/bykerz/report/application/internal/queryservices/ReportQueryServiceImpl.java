@@ -6,7 +6,8 @@ import nrg.inc.bykerz.report.domain.model.queries.GetMetricsByReportIdQuery;
 import nrg.inc.bykerz.report.domain.model.queries.GetReportByIdQuery;
 import nrg.inc.bykerz.report.domain.model.queries.GetReportByVehicleIdQuery;
 import nrg.inc.bykerz.report.domain.service.ReportQueryService;
-import nrg.inc.bykerz.report.infrastructure.persistence.jpa.repositories.ReportRepository;
+
+import nrg.inc.bykerz.reports.infrastructure.persistence.jpa.repositories.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
+/*
 @Service
 public class ReportQueryServiceImpl implements ReportQueryService {
 
@@ -67,3 +69,4 @@ public class ReportQueryServiceImpl implements ReportQueryService {
         return null;
     }
 }
+*/

@@ -1,5 +1,5 @@
 package nrg.inc.bykerz.report.interfaces.rest.transform;
-
+/*
 import nrg.inc.bykerz.report.domain.model.aggregate.Report;
 import nrg.inc.bykerz.report.interfaces.rest.resources.ReportResource;
 import org.springframework.stereotype.Component;
@@ -17,3 +17,4 @@ public class ReportResourceFromEntityAssembler {
         );
     }
 }
+*/
