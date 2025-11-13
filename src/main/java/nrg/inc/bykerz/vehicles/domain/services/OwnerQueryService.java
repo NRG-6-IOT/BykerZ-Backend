@@ -13,4 +13,5 @@ public interface OwnerQueryService {
     Optional<Owner> handle(GetOwnerByIdQuery query);
     Optional<Owner> handle(GetOwnerByVehicleIdQuery query);
     List<Owner> handle(GetAllOwnersQuery query);
+
 }
