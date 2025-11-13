@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.reports.application.queryservices;
 
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByVehicleIdQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByOwnerIdQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
 import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
@@ -54,46 +54,43 @@ public class ReportsQueryServiceImpl implements ReportsQueryService {
     public Optional<ReportResource> handle(GetReportByVehicleIdQuery query) {
         Long vehicleId = query.vehicleId();
 
+        // 1. Obtener el vehículo
         var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicleOpt.isEmpty()) {
-            LOGGER.debug("ReportsQueryService: vehicle not found for id={}", vehicleId);
             return Optional.empty();
         }
         var vehicle = vehicleOpt.get();
         VehicleResource vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle);
 
+        // 2. Obtener el ownerId del vehículo
+        Long ownerId = vehicle.getOwner().getId();
+
+        // 3. Obtener los mantenimientos del vehículo
         List<MaintenanceResource> maintenancesResources = maintenanceQueryService
                 .handle(new GetAllMaintenancesByVehicleIdQuery(vehicleId))
                 .stream()
                 .map(MaintenanceResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
 
+        // 4. Obtener la asignación por ownerId (refactorización)
         AssignmentResource assignmentResource = null;
-        var assignmentOpt = assignmentQueryService.handle(new GetAssignmentByVehicleIdQuery(vehicleId));
+        var assignmentOpt = assignmentQueryService.handle(new GetAssignmentByOwnerIdQuery(ownerId));
 
         if (assignmentOpt.isPresent()) {
             var assignment = assignmentOpt.get();
             var mechanicOpt = mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
+
             if (mechanicOpt.isPresent()) {
                 var mechanic = mechanicOpt.get();
-                // Fetch owner if ownerId is present
-                var owner = assignment.getOwnerId() != null
-                        ? externalVehiclesService.getOwnerById(assignment.getOwnerId()).orElse(null)
-                        : null;
+                var owner = externalVehiclesService.getOwnerById(ownerId).orElse(null);
 
                 assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(
                         assignment,
                         mechanic,
                         owner
                 );
-            } else {
-                LOGGER.debug("ReportsQueryService: assignment found for vehicleId={} but mechanic id={} not found",
-                        vehicleId, assignment.getMechanic().getId());
             }
-        } else {
-            LOGGER.debug("ReportsQueryService: no assignment for vehicleId={}", vehicleId);
         }
-
 
         var report = new ReportResource(vehicleResource, maintenancesResources, assignmentResource);
         return Optional.of(report);

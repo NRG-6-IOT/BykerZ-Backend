@@ -1,12 +1,10 @@
-package nrg.inc.bykerz.reports.interfaces;
+package nrg.inc.bykerz.reports.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nrg.inc.bykerz.reports.domain.model.queries.GetReportByVehicleIdQuery;
 import nrg.inc.bykerz.reports.domain.services.ReportsQueryService;
 import nrg.inc.bykerz.reports.interfaces.rest.resources.ReportResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,24 +16,21 @@ public class ReportController {
 
     private final ReportsQueryService reportsQueryService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
-
     public ReportController(ReportsQueryService reportsQueryService) {
         this.reportsQueryService = reportsQueryService;
     }
 
-    @GetMapping(value = "/owner/{vehicleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/vehicle/{vehicleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get aggregated report by vehicle ID", description = "Aggregates vehicle, maintenances and assignment data for the given vehicleId")
     public ResponseEntity<ReportResource> getReportByVehicleId(@PathVariable Long vehicleId) {
         var reportOpt = reportsQueryService.handle(new GetReportByVehicleIdQuery(vehicleId));
         if (reportOpt.isEmpty()) {
-            LOGGER.debug("ReportController: report not found for vehicle id={}", vehicleId);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(reportOpt.get());
     }
 
-    @GetMapping(value = "/owner/{vehicleId}/export", produces = "text/csv")
+    @GetMapping(value = "/vehicle/{vehicleId}/export", produces = "text/csv")
     @Operation(summary = "Export aggregated report by vehicle ID as CSV")
     public ResponseEntity<String> exportReportByVehicleId(@PathVariable Long vehicleId) {
         var reportOpt = reportsQueryService.handle(new GetReportByVehicleIdQuery(vehicleId));
@@ -59,30 +54,43 @@ public class ReportController {
             csv.append("Vehicle,Potency,").append(escapeCSV(vehicle.model().potency())).append("\n");
             csv.append("Vehicle,Engine Type,").append(escapeCSV(vehicle.model().engineType())).append("\n");
             csv.append("Vehicle,Weight,").append(escapeCSV(vehicle.model().weight())).append("\n");
+            csv.append("Vehicle,Plate,").append(escapeCSV(vehicle.plate())).append("\n");
+            csv.append("Vehicle,Year,").append(escapeCSV(vehicle.year())).append("\n");
         }
 
         // Assignment section
         if (report.assignment() != null) {
             var assignment = report.assignment();
+            if (assignment.owner() != null) {
+                csv.append("Assignment,Owner Name,").append(escapeCSV(assignment.owner().completeName())).append("\n");
+            }
             if (assignment.mechanic() != null) {
                 csv.append("Assignment,Mechanic Name,").append(escapeCSV(assignment.mechanic().completeName())).append("\n");
             }
             csv.append("Assignment,Status,").append(escapeCSV(assignment.status())).append("\n");
             csv.append("Assignment,Type,").append(escapeCSV(assignment.type())).append("\n");
+            csv.append("Assignment,Assignment Code,").append(escapeCSV(assignment.assignmentCode())).append("\n");
         }
 
         // Maintenances section
         if (report.maintenances() != null && !report.maintenances().isEmpty()) {
+            int maintenanceCount = 1;
             for (var m : report.maintenances()) {
-                csv.append("Maintenance,Date,").append(escapeCSV(m.dateOfService())).append("\n");
-                csv.append("Maintenance,Location,").append(escapeCSV(m.location())).append("\n");
-                csv.append("Maintenance,Description,").append(escapeCSV(m.description())).append("\n");
-                csv.append("Maintenance,State,").append(escapeCSV(m.state())).append("\n");
+                String prefix = "Maintenance " + maintenanceCount;
+                csv.append(prefix + ",Date,").append(escapeCSV(m.dateOfService())).append("\n");
+                csv.append(prefix + ",Location,").append(escapeCSV(m.location())).append("\n");
+                csv.append(prefix + ",Description,").append(escapeCSV(m.description())).append("\n");
+                csv.append(prefix + ",State,").append(escapeCSV(m.state())).append("\n");
+                if (m.expense() != null) {
+                    csv.append(prefix + ",Expense Name,").append(escapeCSV(m.expense().name())).append("\n");
+                    csv.append(prefix + ",Expense Final Price,").append(m.expense().finalPrice()).append("\n");
+                }
+                maintenanceCount++;
             }
         }
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=owner-report-" + vehicleId + ".csv")
+                .header("Content-Disposition", "attachment; filename=vehicle-report-" + vehicleId + ".csv")
                 .body(csv.toString());
     }
 
