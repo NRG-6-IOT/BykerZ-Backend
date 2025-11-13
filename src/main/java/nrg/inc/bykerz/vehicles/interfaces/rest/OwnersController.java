@@ -60,15 +60,4 @@ public class OwnersController {
         var ownerResource = OwnerResourceFromEntityAssembler.toResourceFromEntity(owner.get());
         return ResponseEntity.ok(ownerResource);
     }
-
-    @GetMapping("/vehicle/{vehicleId}")
-    @Operation(summary = "Get owner by vehicle ID", description = "Retrieve the owner of a specific vehicle by its ID")
-    public ResponseEntity<OwnerResource> getOwnerByVehicleId(@PathVariable Long vehicleId) {
-        var ownerOpt = ownerQueryService.handle(new GetOwnerByVehicleIdQuery(vehicleId));
-        if (ownerOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        var ownerResource = OwnerResourceFromEntityAssembler.toResourceFromEntity(ownerOpt.get());
-        return ResponseEntity.ok(ownerResource);
-    }
 }
