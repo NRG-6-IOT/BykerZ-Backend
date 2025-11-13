@@ -4,7 +4,8 @@ public record VehicleResource(
         Long id,
         Long ownerId,
         ModelResource model,
-        String year,
-        String plate
+        String plate,
+        String year
 ) {
+
 }

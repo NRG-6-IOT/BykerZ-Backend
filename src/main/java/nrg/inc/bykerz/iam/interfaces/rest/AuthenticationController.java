@@ -50,7 +50,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-up")
-    @Operation(summary = "Sign-up", description = "Sign-up with the provided credentials.")
+    @Operation(summary = "Sign-up", description = "Sign-up with the provided details and credentials.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully."),
             @ApiResponse(responseCode = "400", description = "Bad request.")})
@@ -63,11 +63,5 @@ public class AuthenticationController {
         var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
         return new ResponseEntity<>(userResource, HttpStatus.CREATED);
 
-    }
-
-    // ✅ Handler para OPTIONS (preflight)
-    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
-    public ResponseEntity<Void> handleOptions() {
-        return ResponseEntity.ok().build();
     }
 }

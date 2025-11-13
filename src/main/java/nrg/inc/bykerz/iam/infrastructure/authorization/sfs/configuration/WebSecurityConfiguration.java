@@ -76,6 +76,8 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/authentication/**",
+                                "/api/v1/assignments/code/**",
+                                "/api/v1/users/owner",
                                 "/v3/api-docs/**",
                                 "/api-docs/**",
                                 "/swagger-ui/**",
@@ -88,7 +90,10 @@ public class WebSecurityConfiguration {
                                 "/",
                                 "/index.html",
                                 "/favicon.ico",
-                                "/error"
+                                "/error",
+                                "/ws-wellness/**",
+                                "/topic/**",
+                                "/app/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -103,7 +108,7 @@ public class WebSecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
 

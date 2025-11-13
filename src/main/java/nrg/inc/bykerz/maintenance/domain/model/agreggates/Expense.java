@@ -21,9 +21,8 @@ public class Expense extends AuditableAbstractAggregateRoot<Expense> {
     @NotNull
     private Double finalPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @NotNull
+    private Long userId;
 
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ExpenseItem> expenseItems;
@@ -32,10 +31,10 @@ public class Expense extends AuditableAbstractAggregateRoot<Expense> {
     @JoinColumn(name = "expense_type_id")
     private ExpenseType expenseType;
 
-    public Expense(String name, Double finalPrice, User user, ExpenseType expenseType) {
+    public Expense(String name, Double finalPrice, Long userId, ExpenseType expenseType) {
         this.name = name;
         this.finalPrice = finalPrice;
-        this.user = user;
+        this.userId = userId;
         this.expenseType = expenseType;
         this.expenseItems = new ArrayList<>();
     }

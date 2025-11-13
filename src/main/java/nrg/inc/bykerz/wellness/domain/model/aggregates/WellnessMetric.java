@@ -1,0 +1,69 @@
+package nrg.inc.bykerz.wellness.domain.model.aggregates;
+
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import nrg.inc.bykerz.wellness.domain.model.commands.CreateWellnessMetricCommand;
+import nrg.inc.bykerz.wellness.domain.model.commands.UpdateWellnessMetricCommand;
+import nrg.inc.bykerz.wellness.domain.model.valueobjects.*;
+
+@Getter
+@Entity
+public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetric> {
+
+    private Long vehicleId;
+
+    @Embedded
+    private Coordinates coordinates;
+    @Embedded
+    private AirQuality airQuality;
+    @Embedded
+    private EnvironmentalConditions environmentalConditions;
+    @Embedded
+    private AtmosphericPressure atmosphericPressure;
+    @Embedded
+    private StatusImpact statusImpact;
+
+    protected WellnessMetric() {super();}
+
+    public WellnessMetric(CreateWellnessMetricCommand createWellnessMetricCommand){
+        this.vehicleId=createWellnessMetricCommand.vehicleId();
+        this.coordinates=new Coordinates(createWellnessMetricCommand.latitude(), createWellnessMetricCommand.longitude());
+        this.airQuality=new AirQuality(createWellnessMetricCommand.CO2Ppm(), createWellnessMetricCommand.NH3Ppm(), createWellnessMetricCommand.BenzenePpm());
+        this.environmentalConditions=new EnvironmentalConditions(createWellnessMetricCommand.temperatureCelsius(), createWellnessMetricCommand.humidityPercentage());
+        this.atmosphericPressure=new AtmosphericPressure(createWellnessMetricCommand.pressureHpa());
+        this.statusImpact=new StatusImpact(createWellnessMetricCommand.impactDetected());
+    }
+
+    public WellnessMetric updateWellnessMetric(UpdateWellnessMetricCommand updateWellnessMetricCommand){
+
+        setCoordinates(updateWellnessMetricCommand.latitude(),updateWellnessMetricCommand.longitude());
+        setAirQuality(updateWellnessMetricCommand.CO2Ppm(),updateWellnessMetricCommand.NH3Ppm(),updateWellnessMetricCommand.BenzenePpm());
+        setEnvironmentalConditions(updateWellnessMetricCommand.temperatureCelsius(),updateWellnessMetricCommand.humidityPercentage());
+        setAtmosphericPressure(updateWellnessMetricCommand.pressureHpa());
+        setStatusImpact(updateWellnessMetricCommand.impactDetected());
+
+        return this;
+    }
+
+    private void setCoordinates(Float latitude, Float longitude){
+        this.coordinates=new Coordinates(latitude,longitude);
+    }
+
+    private void setAirQuality(Double CO2Ppm, Double NH3Ppm, Double BenzenePpm){
+        this.airQuality=new AirQuality(CO2Ppm,NH3Ppm,BenzenePpm);
+    }
+
+    private void setEnvironmentalConditions(Float temperatureCelsius,Float humidityPercentage){
+        this.environmentalConditions=new EnvironmentalConditions(temperatureCelsius,humidityPercentage);
+    }
+
+    private void setAtmosphericPressure(Float pressureHPa) {
+        this.atmosphericPressure = new AtmosphericPressure(pressureHPa);
+    }
+
+    private void setStatusImpact(Boolean impactDetected) {
+        this.statusImpact= new StatusImpact(impactDetected);
+    }
+}

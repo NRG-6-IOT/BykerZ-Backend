@@ -22,7 +22,7 @@ public class ExpenseQueryServiceImpl implements ExpenseQueryService {
 
     @Transactional(readOnly = true)
     public List<Expense> handle(GetAllExpensesByUserIdQuery query) {
-        return expenseRepository.getExpensesByUser_Id(query.userId());
+        return expenseRepository.findByUserId(query.userId());
     }
 
     @Transactional(readOnly = true)

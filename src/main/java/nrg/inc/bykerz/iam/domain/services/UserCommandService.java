@@ -7,7 +7,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.util.Optional;
 
 public interface UserCommandService {
-    //Optional<User> handle(CreateUserCommand createUserCommand);
 
     void handle(DeleteUserCommand deleteUserCommand);
 

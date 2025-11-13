@@ -1,31 +1,19 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest;
 
-import nrg.inc.bykerz.shared.domain.model.queries.GetOwnerByIdQuery;
-import nrg.inc.bykerz.shared.domain.services.OwnerQueryService;
-import nrg.inc.bykerz.vehicles.domain.model.commands.CreateVehicleCommand;
-import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleCommand;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetModelByIdQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByPlateQuery;
-import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehiclesByOwnerIdQuery;
-import nrg.inc.bykerz.vehicles.domain.services.ModelQueryService;
-import nrg.inc.bykerz.vehicles.domain.services.VehicleCommandService;
-import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
-import nrg.inc.bykerz.vehicles.interfaces.rest.resources.CreateVehicleResource;
-import nrg.inc.bykerz.vehicles.interfaces.rest.resources.UpdateVehicleResource;
-import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
-import nrg.inc.bykerz.vehicles.interfaces.rest.transform.CreateVehicleCommandFromResourceAssembler;
-import nrg.inc.bykerz.vehicles.interfaces.rest.transform.UpdateVehicleCommandFromResourceAssembler;
-import nrg.inc.bykerz.vehicles.interfaces.rest.transform.VehicleResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.http.HttpStatus;
+import nrg.inc.bykerz.vehicles.domain.model.commands.DeleteVehicleFromOwnerCommand;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
+import nrg.inc.bykerz.vehicles.domain.services.OwnerQueryService;
+import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
+import nrg.inc.bykerz.vehicles.interfaces.rest.resources.AddVehicleResource;
+import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
+import nrg.inc.bykerz.vehicles.interfaces.rest.transform.AddVehicleCommandFromResourceAssembler;
+import nrg.inc.bykerz.vehicles.interfaces.rest.transform.VehicleResourceFromEntityAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 
@@ -34,108 +22,81 @@ import java.util.List;
 @Tag(name = "Vehicles", description = "Operations related to vehicles")
 public class VehiclesController {
 
-    private final VehicleCommandService vehicleCommandService;
-    private final VehiclesQueryService vehiclesQueryService;
-    private final ModelQueryService modelQueryService;
     private final OwnerQueryService ownerQueryService;
+    private final OwnerCommandService ownerCommandService;
+    private final VehiclesQueryService vehiclesQueryService;
 
     public VehiclesController(
-            VehicleCommandService vehicleCommandService,
+            OwnerQueryService ownerQueryService,
             VehiclesQueryService vehiclesQueryService,
-            ModelQueryService modelQueryService,
-            OwnerQueryService ownerQueryService
+            OwnerCommandService ownerCommandService
     ) {
-        this.vehicleCommandService = vehicleCommandService;
-        this.vehiclesQueryService = vehiclesQueryService;
-        this.modelQueryService = modelQueryService;
         this.ownerQueryService = ownerQueryService;
-    }
-
-    @PostMapping("/{ownerId}")
-    @Operation(summary = "Create a new vehicle for a owner")
-    public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource createVehicleResource, @PathVariable Long ownerId) {
-
-        var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
-
-        if (ownerOpt.isEmpty()) {
-            ResponseEntity.notFound().build();
-        }
-
-        var model = modelQueryService.handle(new GetModelByIdQuery(createVehicleResource.modelId()));
-
-        if(model.isEmpty()) {
-            ResponseEntity.notFound().build();
-        }
-
-        CreateVehicleCommand command = CreateVehicleCommandFromResourceAssembler.toCommandFromResource(createVehicleResource, ownerId);
-        var vehicle = vehicleCommandService.handle(command)
-                .orElseThrow(() -> new IllegalArgumentException("Error creating vehicle"));
-        return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{vehicleId}")
-    @Operation(summary = "Get vehicle by ID")
-    public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long vehicleId) {
-        var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
-        return vehicle.map(v -> ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(v)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        this.vehiclesQueryService = vehiclesQueryService;
+        this.ownerCommandService = ownerCommandService;
     }
 
     @GetMapping("/owner/{ownerId}")
-    @Operation(summary = "Get vehicles by owner ID")
+    @Operation(summary = "Get vehicles by owner ID", description = "Retrieve all vehicles associated with a specific owner ID")
     public ResponseEntity<List<VehicleResource>> getVehiclesByOwnerId(@PathVariable Long ownerId) {
         var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
         if (ownerOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        var vehicles = vehiclesQueryService.handle(new GetVehiclesByOwnerIdQuery(ownerId));
-        if (vehicles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok().body(
-                vehicles.stream()
-                        .map(VehicleResourceFromEntityAssembler::toResourceFromEntity)
-                        .toList()
-        );
+        var owner = ownerOpt.get();
+        var vehicles = owner.GetVehicles();
+        var vehicleResources = vehicles.stream().map(VehicleResourceFromEntityAssembler::toResourceFromEntity).toList();
+        return ResponseEntity.ok(vehicleResources);
     }
 
-    @GetMapping("/plate/{plate}")
-    @Operation(summary = "Get vehicle by plate")
-    public ResponseEntity<VehicleResource> getVehicleByPlate(@PathVariable String plate) {
-        var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByPlateQuery(plate));
+    @GetMapping("/{vehicleId}")
+    @Operation(summary = "Get vehicle by ID", description = "Retrieve a vehicle using its unique ID")
+    public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long vehicleId) {
+        var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicleOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        var vehicle = vehicleOpt.get();
-        return ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle));
+        var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicleOpt.get());
+        return ResponseEntity.ok(vehicleResource);
     }
+
+
+    @PostMapping("/{ownerId}")
+    @Operation(summary = "Add a new vehicle to an owner", description = "Create and associate a new vehicle with a specific owner ID")
+    public ResponseEntity<VehicleResource> addVehicleToOwner(
+            @PathVariable Long ownerId,
+            @RequestBody AddVehicleResource resource
+    ) {
+        var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(ownerId));
+        if (ownerOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var command = AddVehicleCommandFromResourceAssembler.toCommandFromResource(ownerId, resource);
+        var vehicleOpt = ownerCommandService.handle(command);
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicleOpt.get());
+        return ResponseEntity.ok(vehicleResource);
+    }
+
 
     @DeleteMapping("/{vehicleId}")
-    @Operation(summary = "Deletes a vehicle by id")
-    public void deleteVehicleById(@PathVariable Long vehicleId) {
-        var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
-        if (vehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
+    @Operation(summary = "Delete a vehicle by ID", description = "Remove a vehicle from the system using its unique ID")
+    public ResponseEntity<Void> deleteVehicleById(@PathVariable Long vehicleId) {
+        var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        vehicleCommandService.handle(new DeleteVehicleCommand(vehicleId));
-        ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{vehicleId}")
-    @Operation(summary = "Updates vehicle data by id")
-    public ResponseEntity<VehicleResource> updateVehicle(@PathVariable Long vehicleId, @RequestBody UpdateVehicleResource resource) {
-        var vehicle = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
-        if (vehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
+        var ownerOpt = ownerQueryService.handle(new GetOwnerByIdQuery(vehicleOpt.get().getOwner().getId()));
+        if (ownerOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        var newVehicle = vehicleCommandService.handle(UpdateVehicleCommandFromResourceAssembler.toCommandFromResource(resource, vehicleId));
-
-        if (newVehicle.isEmpty()) {
-            ResponseEntity.notFound().build();
-        }
-
-        return new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(newVehicle.get()), HttpStatus.OK);
+        var command = new DeleteVehicleFromOwnerCommand(ownerOpt.get().getId(), vehicleId);
+        this.ownerCommandService.handle(command);
+        return ResponseEntity.noContent().build();
     }
 
 }

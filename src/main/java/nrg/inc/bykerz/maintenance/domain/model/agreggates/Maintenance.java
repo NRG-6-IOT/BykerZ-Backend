@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nrg.inc.bykerz.maintenance.domain.model.entities.MaintenanceState;
-import nrg.inc.bykerz.maintenance.domain.model.valueobjects.MaintenanceStates;
 import nrg.inc.bykerz.shared.domain.model.entity.AuditableModel;
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 
 import java.util.Date;
 
@@ -19,9 +17,8 @@ public class Maintenance extends AuditableModel {
     @NotNull
     private String details;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle;
+    @NotNull
+    private Long vehicleId;
 
     @NotNull
     private Date dateOfService;
@@ -40,20 +37,25 @@ public class Maintenance extends AuditableModel {
     @JoinColumn(name = "maintenance_state_id")
     private MaintenanceState state;
 
+    @NotNull
+    private Long mechanicId;
+
     public Maintenance(
             String details,
-            Vehicle vehicle,
+            Long vehicleId,
             Date dateOfService,
             String location,
             String description,
-            MaintenanceState state
+            MaintenanceState state,
+            Long mechanicId
     ) {
         this.details = details;
-        this.vehicle = vehicle;
+        this.vehicleId = vehicleId;
         this.dateOfService = dateOfService;
         this.location = location;
         this.description = description;
         this.state = state;
+        this.mechanicId = mechanicId;
     }
 
     public void AssignExpenseToMaintenance(Expense expense){

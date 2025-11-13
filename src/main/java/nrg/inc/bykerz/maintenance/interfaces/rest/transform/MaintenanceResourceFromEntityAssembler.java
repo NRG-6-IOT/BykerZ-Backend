@@ -8,14 +8,15 @@ public class MaintenanceResourceFromEntityAssembler {
         return new MaintenanceResource(
                 entity.getId(),
                 entity.getDetails(),
-                entity.getVehicle().getId(),
+                entity.getVehicleId(),
                 entity.getDateOfService().toString(),
                 entity.getLocation(),
                 entity.getDescription(),
                 entity.getState().getName().toString(),
                 entity.getMaintenanceExpense() != null ?
                         ExpenseResourceFromEntityAssembler.toResourceFromEntity(entity.getMaintenanceExpense())
-                        : null
+                        : null,
+                entity.getMechanicId()
         );
     }
 }

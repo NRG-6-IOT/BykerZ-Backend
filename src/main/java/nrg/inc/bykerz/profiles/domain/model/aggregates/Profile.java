@@ -20,17 +20,22 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "address", column = @Column(name = "email_address"))})
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
     private EmailAddress emailAddress;
+
+    @Getter
+    @Column(name = "photo_url")
+    private String photoUrl;
 
     @Embedded
     private UserId userId;
 
-    public Profile(String firstName, String lastName, String emailAddress, Long profileId) {
+    public Profile(String firstName, String lastName, String emailAddress, String photoUrl, Long userId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = new EmailAddress(emailAddress);
-        this.userId = new UserId(profileId);
+        this.photoUrl = photoUrl;
+        this.userId = new UserId(userId);
     }
 
     public Profile() {
@@ -47,6 +52,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
         this.firstName = command.firstName();
         this.lastName = command.lastName();
         this.emailAddress = new EmailAddress(command.email());
+        this.photoUrl = command.photoUrl();
         this.userId = new UserId(command.userId());
     }
 
@@ -64,4 +70,8 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     }
 
     public Long getUserId() { return this.userId.userId(); }
+
+    public String getCompleteName() {
+        return this.firstName + " " + this.lastName;
+    }
 }

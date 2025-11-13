@@ -5,7 +5,6 @@ import nrg.inc.bykerz.iam.domain.model.entities.Role;
 import nrg.inc.bykerz.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
 
 import java.util.HashSet;
 import java.util.List;

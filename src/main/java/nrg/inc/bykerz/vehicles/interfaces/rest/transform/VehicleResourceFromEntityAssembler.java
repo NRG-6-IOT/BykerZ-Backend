@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.vehicles.interfaces.rest.transform;
 
-import nrg.inc.bykerz.vehicles.domain.model.aggregates.Vehicle;
+import nrg.inc.bykerz.vehicles.domain.model.entities.Vehicle;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.ModelResource;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
 
@@ -10,10 +10,10 @@ public class VehicleResourceFromEntityAssembler {
 
         return new VehicleResource(
                 vehicle.getId(),
-                vehicle.getOwnerId(),
+                vehicle.getOwner().getId(),
                 model,
-                vehicle.getYear(),
-                vehicle.getPlate().plate()
+                vehicle.getPlate().plate(),
+                vehicle.getYear().year()
         );
     }
 }

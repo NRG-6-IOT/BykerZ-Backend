@@ -6,8 +6,10 @@ import nrg.inc.bykerz.iam.domain.model.queries.GetUserByUsernameQuery;
 import nrg.inc.bykerz.iam.domain.services.UserQueryService;
 import nrg.inc.bykerz.maintenance.application.internal.commandservices.ExpenseItemCommandServiceImpl;
 import nrg.inc.bykerz.maintenance.domain.model.commands.AddExpenseItemCommand;
+import nrg.inc.bykerz.maintenance.domain.model.commands.CreateExpenseByOwnerIdCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.CreateExpenseCommand;
 import nrg.inc.bykerz.maintenance.domain.model.commands.DeleteExpenseCommand;
+import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllExpensesByUserIdQuery;
 import nrg.inc.bykerz.maintenance.domain.model.queries.GetExpenseByIdQuery;
 import nrg.inc.bykerz.maintenance.domain.services.ExpenseCommandService;
 import nrg.inc.bykerz.maintenance.domain.services.ExpenseItemCommandService;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/expense")
@@ -36,15 +40,79 @@ public class ExpenseController {
         this.expenseQueryService = expenseQueryService;
     }
 
-
-    @PostMapping
-    @Operation(summary = "Create a new expense", description = "Create a new expense for a user")
-    public ResponseEntity<ExpenseResource> createExpense(@RequestBody CreateExpenseResource resource, @AuthenticationPrincipal UserDetails userDetails) {
+    @GetMapping
+    @Operation(summary = "Get All Expenses", description = "Get All Expenses of an Owner")
+    public ResponseEntity<List<ExpenseResource>> getAllExpenses(@AuthenticationPrincipal UserDetails userDetails){
         String username = userDetails.getUsername();
         var getUserByUsernameQuery = new GetUserByUsernameQuery(username);
         var user = userQueryService.handle(getUserByUsernameQuery);
         if (user.isEmpty()) {return ResponseEntity.notFound().build();}
         var userId = user.get().getId();
+
+        var getAllExpensesByUserIdQuery = new GetAllExpensesByUserIdQuery(userId);
+
+        var expenses = expenseQueryService.handle(getAllExpensesByUserIdQuery);
+
+        var expenseResources = expenses.stream()
+                .map(ExpenseResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return ResponseEntity.ok(expenseResources);
+
+
+    }
+
+    @PostMapping("/owner/{ownerId}")
+    @Operation(summary = "Create new Expense By Owner Id", description = "Create a new expense for an owner" )
+    public ResponseEntity<ExpenseResource> createExpenseByOwnerId(
+            @RequestBody CreateExpenseResource resource,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long ownerId
+    ){
+        var createExpenseByOwnerIdCommand = new CreateExpenseByOwnerIdCommand(
+                resource.name(),
+                resource.finalPrice(),
+                ownerId,
+                resource.expenseType()
+        );
+
+        var expense = expenseCommandService.handle(createExpenseByOwnerIdCommand);
+
+        if (expense.isEmpty()) {return ResponseEntity.badRequest().build();}
+
+        resource.items().forEach(item -> {
+            try  {
+                var addExpenseItemCommand = new AddExpenseItemCommand(
+                        expense.get().getId(),
+                        item.name(),
+                        item.amount(),
+                        item.unitPrice(),
+                        item.totalPrice(),
+                        item.itemType()
+                );
+
+                var expenseItem = expenseItemCommandService.handle(addExpenseItemCommand);
+
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error while creating expense item: " + e);
+            }
+        });
+
+        var createdExpense = expenseQueryService.handle(new GetExpenseByIdQuery(expense.get().getId()));
+
+        var expenseResource = ExpenseResourceFromEntityAssembler.toResourceFromEntity(createdExpense.get());
+
+        return ResponseEntity.ok(expenseResource);
+    }
+
+
+    @PostMapping("/{userId}")
+    @Operation(summary = "Create a new expense", description = "Create a new expense for a user")
+    public ResponseEntity<ExpenseResource> createExpense(
+            @RequestBody CreateExpenseResource resource,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long userId
+            ) {
 
         var createExpenseCommand = new CreateExpenseCommand(
                 resource.name(),

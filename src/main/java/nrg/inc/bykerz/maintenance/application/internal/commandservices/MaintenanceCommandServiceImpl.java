@@ -9,7 +9,7 @@ import nrg.inc.bykerz.maintenance.domain.model.valueobjects.MaintenanceStates;
 import nrg.inc.bykerz.maintenance.domain.services.ExpenseQueryService;
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceCommandService;
 import nrg.inc.bykerz.maintenance.infrastructure.persistence.jpa.repositories.MaintenanceRepository;
-import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleRepository;
+import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.VehicleReadRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,13 +18,13 @@ import java.util.Optional;
 public class MaintenanceCommandServiceImpl implements MaintenanceCommandService {
 
     private final MaintenanceRepository maintenanceRepository;
-    private final VehicleRepository vehicleRepository;
+    private final VehicleReadRepository vehicleReadRepository;
     private final ExpenseCommandServiceImpl expenseCommandService;
     private final ExpenseQueryService expenseQueryService;
 
-    public MaintenanceCommandServiceImpl(MaintenanceRepository maintenanceRepository, VehicleRepository vehicleRepository, ExpenseCommandServiceImpl expenseCommandService, ExpenseQueryService expenseQueryService) {
+    public MaintenanceCommandServiceImpl(MaintenanceRepository maintenanceRepository, VehicleReadRepository vehicleReadRepository, ExpenseCommandServiceImpl expenseCommandService, ExpenseQueryService expenseQueryService) {
         this.maintenanceRepository = maintenanceRepository;
-        this.vehicleRepository = vehicleRepository;
+        this.vehicleReadRepository = vehicleReadRepository;
         this.expenseCommandService = expenseCommandService;
         this.expenseQueryService = expenseQueryService;
     }
@@ -32,7 +32,7 @@ public class MaintenanceCommandServiceImpl implements MaintenanceCommandService 
     @Override
     public Optional<Maintenance> handle(CreateMaintenanceCommand command) {
 
-        var vehicle = vehicleRepository.findById(command.vehicleId());
+        var vehicle = vehicleReadRepository.findById(command.vehicleId());
 
         if (vehicle.isEmpty()) {
             throw new IllegalArgumentException("Vehicle with id " + command.vehicleId() + " not found");
@@ -40,11 +40,12 @@ public class MaintenanceCommandServiceImpl implements MaintenanceCommandService 
 
         var maintenance = new Maintenance(
                 command.details(),
-                vehicle.get(),
+                command.vehicleId(),
                 command.dateOfService(),
                 command.location(),
                 command.description(),
-                new MaintenanceState(MaintenanceStates.PENDING)
+                new MaintenanceState(MaintenanceStates.PENDING),
+                command.mechanicId()
         );
 
 

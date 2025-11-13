@@ -1,5 +1,6 @@
 package nrg.inc.bykerz.iam.application.internal.commandservices;
 
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalProfileService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.hashing.HashingService;
 import nrg.inc.bykerz.iam.application.internal.outboundservices.tokens.TokenService;
 import nrg.inc.bykerz.iam.domain.model.aggregates.User;
@@ -19,6 +20,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RoleRepository roleRepository;
     private final HashingService hashingService;
     private final TokenService tokenService;
+    private final ExternalProfileService externalProfileService;
 
     /**
      * User Command Service Implementation
@@ -26,11 +28,12 @@ public class UserCommandServiceImpl implements UserCommandService {
      *     This class implements the {@link UserCommandService} interface to handle user-related commands such as {@link SignInCommand}, {@link SignUpCommand} and {@link UpdateUserCommand}.
      * </p>
      */
-    public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, HashingService hashingService, TokenService tokenService) {
+    public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, HashingService hashingService, TokenService tokenService, ExternalProfileService externalProfileService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
+        this.externalProfileService = externalProfileService;
     }
 
     /**
@@ -135,10 +138,18 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
         var roles= signUpCommand.roles().stream().map(
                 role->roleRepository.findByName(role)
-                        .orElseThrow(() -> new IllegalArgumentException("Role " + role + " not found"))
+                        .orElseThrow(() -> new IllegalArgumentException("Role not found"))
                 ).toList();
         var user = new User(signUpCommand.username(), hashingService.encode(signUpCommand.password()), roles);
         userRepository.save(user);
+
+        var createProfile = externalProfileService.createProfile(signUpCommand.firstName(), signUpCommand.lastName(), signUpCommand.email(), signUpCommand.photoUrl(), user.getId());
+        if (createProfile == 0L) {
+            // Rollback user creation if profile creation fails
+            userRepository.deleteById(user.getId());
+            throw new IllegalArgumentException("Failed to create profile for user " + signUpCommand.username());
+        }
+
         return userRepository.findByUsername(signUpCommand.username());
     }
 }
