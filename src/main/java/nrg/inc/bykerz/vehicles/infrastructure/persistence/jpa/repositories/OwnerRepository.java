@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OwnerRepository extends JpaRepository<Owner, Long> {
     Optional<Owner> findOwnerByProfile_Id(Long profileId);
+    Optional<Owner> findOwnerByVehicles_Id(Long vehicleId);
 }

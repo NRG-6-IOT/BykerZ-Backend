@@ -3,6 +3,7 @@ package nrg.inc.bykerz.vehicles.application.internal.queryservices;
 import nrg.inc.bykerz.vehicles.domain.model.aggregates.Owner;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllOwnersQuery;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByIdQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByVehicleIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerQueryService;
 import nrg.inc.bykerz.vehicles.infrastructure.persistence.jpa.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,11 @@ public class OwnerQueryServiceImpl implements OwnerQueryService {
     @Override
     public Optional<Owner> handle(GetOwnerByIdQuery query) {
         return this.ownerRepository.findById(query.ownerId());
+    }
+
+    @Override
+    public Optional<Owner> handle(GetOwnerByVehicleIdQuery query) {
+        return this.ownerRepository.findOwnerByVehicles_Id(query.vehicleId());
     }
 
     @Override

@@ -60,6 +60,7 @@ public class VehiclesController {
         return ResponseEntity.ok(vehicleResource);
     }
 
+
     @PostMapping("/{ownerId}")
     @Operation(summary = "Add a new vehicle to an owner", description = "Create and associate a new vehicle with a specific owner ID")
     public ResponseEntity<VehicleResource> addVehicleToOwner(

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nrg.inc.bykerz.vehicles.domain.model.commands.CreateOwnerCommand;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetAllOwnersQuery;
+import nrg.inc.bykerz.vehicles.domain.model.queries.GetOwnerByVehicleIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerCommandService;
 import nrg.inc.bykerz.vehicles.domain.services.OwnerQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.CreateOwnerResource;
@@ -34,6 +35,17 @@ public class OwnersController {
         var owners = this.ownerQueryService.handle(new GetAllOwnersQuery());
         var ownerList = owners.stream().map(OwnerResourceFromEntityAssembler::toResourceFromEntity).toList();
         return ResponseEntity.ok(ownerList);
+    }
+
+    @GetMapping("/vehicle/{vehicleId}")
+    @Operation(summary = "Get owner by vehicle ID", description = "Retrieve the owner of a specific vehicle by its ID")
+    public ResponseEntity<OwnerResource> getOwnerByVehicleId(@PathVariable Long vehicleId) {
+        var ownerOpt = ownerQueryService.handle(new GetOwnerByVehicleIdQuery(vehicleId));
+        if (ownerOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var ownerResource = OwnerResourceFromEntityAssembler.toResourceFromEntity(ownerOpt.get());
+        return ResponseEntity.ok(ownerResource);
     }
 
     @PostMapping
