@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/*
 @RestController
 @RequestMapping("/api/v1/reports")
 @Tag(name = "Reports", description = "Reports API")
@@ -25,7 +24,7 @@ public class ReportController {
         this.reportsQueryService = reportsQueryService;
     }
 
-    @GetMapping(value = "/vehicle/{vehicleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/owner/{vehicleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get aggregated report by vehicle ID", description = "Aggregates vehicle, maintenances and assignment data for the given vehicleId")
     public ResponseEntity<ReportResource> getReportByVehicleId(@PathVariable Long vehicleId) {
         var reportOpt = reportsQueryService.handle(new GetReportByVehicleIdQuery(vehicleId));
@@ -36,7 +35,7 @@ public class ReportController {
         return ResponseEntity.ok(reportOpt.get());
     }
 
-    @GetMapping(value = "/vehicle/{vehicleId}/export", produces = "text/csv")
+    @GetMapping(value = "/owner/{vehicleId}/export", produces = "text/csv")
     @Operation(summary = "Export aggregated report by vehicle ID as CSV")
     public ResponseEntity<String> exportReportByVehicleId(@PathVariable Long vehicleId) {
         var reportOpt = reportsQueryService.handle(new GetReportByVehicleIdQuery(vehicleId));
@@ -51,36 +50,49 @@ public class ReportController {
 
         // Vehicle section
         var vehicle = report.vehicle();
-        csv.append("Vehicle,Model,").append(vehicle.model().name()).append("\n");
-        csv.append("Vehicle,Brand,").append(vehicle.model().brand()).append("\n");
-        csv.append("Vehicle,Model Year,").append(vehicle.model().modelYear()).append("\n");
-        csv.append("Vehicle,Type,").append(vehicle.model().type()).append("\n");
-        csv.append("Vehicle,Displacement,").append(vehicle.model().displacement()).append("\n");
-        csv.append("Vehicle,Potency,").append(vehicle.model().potency()).append("\n");
-        csv.append("Vehicle,Engine Type,").append(vehicle.model().engineType()).append("\n");
-        csv.append("Vehicle,Weight,").append(vehicle.model().weight()).append("\n");
+        if (vehicle != null && vehicle.model() != null) {
+            csv.append("Vehicle,Model,").append(escapeCSV(vehicle.model().name())).append("\n");
+            csv.append("Vehicle,Brand,").append(escapeCSV(vehicle.model().brand())).append("\n");
+            csv.append("Vehicle,Model Year,").append(escapeCSV(vehicle.model().modelYear())).append("\n");
+            csv.append("Vehicle,Type,").append(escapeCSV(vehicle.model().type())).append("\n");
+            csv.append("Vehicle,Displacement,").append(escapeCSV(vehicle.model().displacement())).append("\n");
+            csv.append("Vehicle,Potency,").append(escapeCSV(vehicle.model().potency())).append("\n");
+            csv.append("Vehicle,Engine Type,").append(escapeCSV(vehicle.model().engineType())).append("\n");
+            csv.append("Vehicle,Weight,").append(escapeCSV(vehicle.model().weight())).append("\n");
+        }
 
         // Assignment section
         if (report.assignment() != null) {
-            csv.append("Assignment,Mechanic Name,").append(report.assignment().mechanic().completeName()).append("\n");
-            csv.append("Assignment,Status,").append(report.assignment().status()).append("\n");
-            csv.append("Assignment,Type,").append(report.assignment().type()).append("\n");
+            var assignment = report.assignment();
+            if (assignment.mechanic() != null) {
+                csv.append("Assignment,Mechanic Name,").append(escapeCSV(assignment.mechanic().completeName())).append("\n");
+            }
+            csv.append("Assignment,Status,").append(escapeCSV(assignment.status())).append("\n");
+            csv.append("Assignment,Type,").append(escapeCSV(assignment.type())).append("\n");
         }
 
         // Maintenances section
         if (report.maintenances() != null && !report.maintenances().isEmpty()) {
             for (var m : report.maintenances()) {
-                csv.append("Maintenance,Date,").append(m.dateOfService()).append("\n");
-                csv.append("Maintenance,Location,").append(m.location()).append("\n");
-                csv.append("Maintenance,Description,").append(m.description()).append("\n");
-                csv.append("Maintenance,State,").append(m.state()).append("\n");
+                csv.append("Maintenance,Date,").append(escapeCSV(m.dateOfService())).append("\n");
+                csv.append("Maintenance,Location,").append(escapeCSV(m.location())).append("\n");
+                csv.append("Maintenance,Description,").append(escapeCSV(m.description())).append("\n");
+                csv.append("Maintenance,State,").append(escapeCSV(m.state())).append("\n");
             }
         }
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=vehicle-report-" + vehicleId + ".csv")
+                .header("Content-Disposition", "attachment; filename=owner-report-" + vehicleId + ".csv")
                 .body(csv.toString());
     }
 
+    private String escapeCSV(String value) {
+        if (value == null) {
+            return "";
+        }
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
+    }
 }
-*/
