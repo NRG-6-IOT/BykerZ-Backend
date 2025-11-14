@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -29,21 +28,12 @@ public class KeepAliveService {
     private final String healthUrl;
 
     public KeepAliveService(
-            RestTemplate restTemplate,
             @Value("${keepalive.url:http://localhost:8080/actuator/health}") String healthUrl) {
-        this.restTemplate = restTemplate;
+        this.restTemplate = new RestTemplate();
         this.healthUrl = healthUrl;
         logger.info("KeepAlive service initialized. Will ping: {}", healthUrl);
     }
 
-    /**
-     * Provides a RestTemplate bean for the KeepAlive service.
-     * This RestTemplate doesn't include any authentication headers.
-     */
-    @Bean
-    public RestTemplate keepAliveRestTemplate() {
-        return new RestTemplate();
-    }
 
     /**
      * Pings the health endpoint every 25 seconds (within the 30-second window)
