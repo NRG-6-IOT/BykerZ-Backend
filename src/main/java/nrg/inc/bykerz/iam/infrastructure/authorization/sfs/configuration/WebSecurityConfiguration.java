@@ -93,7 +93,9 @@ public class WebSecurityConfiguration {
                                 "/error",
                                 "/ws-wellness/**",
                                 "/topic/**",
-                                "/app/**"
+                                "/app/**",
+                                "/actuator/health",
+                                "/actuator/health/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
