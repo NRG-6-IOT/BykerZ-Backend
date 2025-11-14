@@ -1,6 +1,6 @@
 package nrg.inc.bykerz.reports.application.queryservices;
 
-import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByVehicleIdQuery;
+import nrg.inc.bykerz.assignments.domain.model.queries.GetAssignmentByOwnerIdQuery;
 import nrg.inc.bykerz.assignments.domain.model.queries.GetMechanicByIdQuery;
 import nrg.inc.bykerz.assignments.domain.services.AssignmentQueryService;
 import nrg.inc.bykerz.assignments.domain.services.MechanicQueryService;
@@ -10,6 +10,7 @@ import nrg.inc.bykerz.maintenance.domain.model.queries.GetAllMaintenancesByVehic
 import nrg.inc.bykerz.maintenance.domain.services.MaintenanceQueryService;
 import nrg.inc.bykerz.maintenance.interfaces.rest.resources.MaintenanceResource;
 import nrg.inc.bykerz.maintenance.interfaces.rest.transform.MaintenanceResourceFromEntityAssembler;
+import nrg.inc.bykerz.shared.application.internal.outboundservices.acl.ExternalVehiclesService;
 import nrg.inc.bykerz.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import nrg.inc.bykerz.vehicles.domain.services.VehiclesQueryService;
 import nrg.inc.bykerz.vehicles.interfaces.rest.resources.VehicleResource;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-/*
+
 @Service
 public class ReportsQueryServiceImpl implements ReportsQueryService {
 
@@ -33,56 +34,65 @@ public class ReportsQueryServiceImpl implements ReportsQueryService {
     private final MaintenanceQueryService maintenanceQueryService;
     private final AssignmentQueryService assignmentQueryService;
     private final MechanicQueryService mechanicQueryService;
+    private final ExternalVehiclesService externalVehiclesService;
 
     public ReportsQueryServiceImpl(
             VehiclesQueryService vehiclesQueryService,
             MaintenanceQueryService maintenanceQueryService,
             AssignmentQueryService assignmentQueryService,
-            MechanicQueryService mechanicQueryService
+            MechanicQueryService mechanicQueryService,
+            ExternalVehiclesService externalVehiclesService
     ) {
         this.vehiclesQueryService = vehiclesQueryService;
         this.maintenanceQueryService = maintenanceQueryService;
         this.assignmentQueryService = assignmentQueryService;
         this.mechanicQueryService = mechanicQueryService;
+        this.externalVehiclesService = externalVehiclesService;
     }
-
 
     @Override
     public Optional<ReportResource> handle(GetReportByVehicleIdQuery query) {
         Long vehicleId = query.vehicleId();
 
+        // 1. Obtener el vehículo
         var vehicleOpt = vehiclesQueryService.handle(new GetVehicleByIdQuery(vehicleId));
         if (vehicleOpt.isEmpty()) {
-            LOGGER.debug("ReportsQueryService: vehicle not found for id={}", vehicleId);
             return Optional.empty();
         }
         var vehicle = vehicleOpt.get();
         VehicleResource vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(vehicle);
 
+        // 2. Obtener el ownerId del vehículo
+        Long ownerId = vehicle.getOwner().getId();
+
+        // 3. Obtener los mantenimientos del vehículo
         List<MaintenanceResource> maintenancesResources = maintenanceQueryService
                 .handle(new GetAllMaintenancesByVehicleIdQuery(vehicleId))
                 .stream()
                 .map(MaintenanceResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
 
+        // 4. Obtener la asignación por ownerId (refactorización)
         AssignmentResource assignmentResource = null;
-        var assignmentOpt = assignmentQueryService.handle(new GetAssignmentByVehicleIdQuery(vehicleId));
+        var assignmentOpt = assignmentQueryService.handle(new GetAssignmentByOwnerIdQuery(ownerId));
 
         if (assignmentOpt.isPresent()) {
             var assignment = assignmentOpt.get();
             var mechanicOpt = mechanicQueryService.handle(new GetMechanicByIdQuery(assignment.getMechanic().getId()));
+
             if (mechanicOpt.isPresent()) {
-                // assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(assignment, mechanicOpt.get());
-            } else {
-                //LOGGER.debug("ReportsQueryService: assignment found for vehicleId={} but mechanic id={} not found", vehicleId, assignment.getMechanicId());
+                var mechanic = mechanicOpt.get();
+                var owner = externalVehiclesService.getOwnerById(ownerId).orElse(null);
+
+                assignmentResource = AssignmentResourceFromEntityAssembler.toResourceFromEntity(
+                        assignment,
+                        mechanic,
+                        owner
+                );
             }
-        } else {
-            LOGGER.debug("ReportsQueryService: no assignment for vehicleId={}", vehicleId);
         }
 
         var report = new ReportResource(vehicleResource, maintenancesResources, assignmentResource);
         return Optional.of(report);
     }
 }
-
-*/
