@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nrg.inc.bykerz.wellness.domain.model.commands.MarkNotificationAsReadCommand;
 import nrg.inc.bykerz.wellness.domain.model.queries.GetAllNotificationsQuery;
 import nrg.inc.bykerz.wellness.domain.model.queries.GetNotificationByIdQuery;
 import nrg.inc.bykerz.wellness.domain.model.queries.GetNotificationsByVehicleIdQuery;
@@ -14,6 +15,7 @@ import nrg.inc.bykerz.wellness.interfaces.rest.resources.CreateNotificationResou
 import nrg.inc.bykerz.wellness.interfaces.rest.resources.NotificationResource;
 import nrg.inc.bykerz.wellness.interfaces.rest.transform.CreateNotificationCommandFromResourceAssembler;
 import nrg.inc.bykerz.wellness.interfaces.rest.transform.NotificationResourceFromEntityAssembler;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -145,5 +147,27 @@ public class NotificationsController {
 
         return ResponseEntity.status(200).body(notificationResources);
 
+    }
+
+    @Operation(summary = "Mark notification as read")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Notification marked as read successfully"),
+            @ApiResponse(responseCode = "404", description = "Notification not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/{id}/read")
+    public ResponseEntity<NotificationResource> markNotificationAsRead(@PathVariable Long id) {
+        try {
+            // Transform de resource to command
+            var command = new MarkNotificationAsReadCommand(id);
+            // Handle the command
+            var notification = notificationCommandService.handle(command);
+            // Transform entity to resource and return response
+            return notification.map(NotificationResourceFromEntityAssembler::toResourceFromEntity)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
