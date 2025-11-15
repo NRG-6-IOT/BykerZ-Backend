@@ -143,12 +143,18 @@ public class UserCommandServiceImpl implements UserCommandService {
         var user = new User(signUpCommand.username(), hashingService.encode(signUpCommand.password()), roles);
         userRepository.save(user);
 
-        var createProfile = externalProfileService.createProfile(signUpCommand.firstName(), signUpCommand.lastName(), signUpCommand.email(), signUpCommand.photoUrl(), user.getId());
+        try {
+            var createProfile = externalProfileService.createProfile(signUpCommand.firstName(), signUpCommand.lastName(), signUpCommand.email(), signUpCommand.photoUrl(), user.getId());
+        } catch (Exception e) {
+            userRepository.deleteById(user.getId());
+            throw new IllegalArgumentException("Failed to create user " + signUpCommand.username());
+        }
+        /*
         if (createProfile == 0L) {
             // Rollback user creation if profile creation fails
             userRepository.deleteById(user.getId());
             throw new IllegalArgumentException("Failed to create profile for user " + signUpCommand.username());
-        }
+        }*/
 
         return userRepository.findByUsername(signUpCommand.username());
     }
