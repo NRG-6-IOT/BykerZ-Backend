@@ -41,7 +41,7 @@ public class OpenApiConfiguration {
                                 .url("http://localhost:8080")
                                 .description("Local Development Server"),
                         new Server()
-                                .url("https://api.bykerz.com")
+                                .url("https://bykerz-backend.onrender.com")
                                 .description("Production Server")
                 ));
 
