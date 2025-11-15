@@ -8,6 +8,8 @@ import nrg.inc.bykerz.wellness.domain.model.commands.CreateWellnessMetricCommand
 import nrg.inc.bykerz.wellness.domain.model.commands.UpdateWellnessMetricCommand;
 import nrg.inc.bykerz.wellness.domain.model.valueobjects.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetric> {
@@ -25,6 +27,8 @@ public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetri
     @Embedded
     private StatusImpact statusImpact;
 
+    private LocalDateTime registeredAt;
+
     protected WellnessMetric() {super();}
 
     public WellnessMetric(CreateWellnessMetricCommand createWellnessMetricCommand){
@@ -34,6 +38,7 @@ public class WellnessMetric extends AuditableAbstractAggregateRoot<WellnessMetri
         this.environmentalConditions=new EnvironmentalConditions(createWellnessMetricCommand.temperatureCelsius(), createWellnessMetricCommand.humidityPercentage());
         this.atmosphericPressure=new AtmosphericPressure(createWellnessMetricCommand.pressureHpa());
         this.statusImpact=new StatusImpact(createWellnessMetricCommand.impactDetected());
+        this.registeredAt=LocalDateTime.now();
     }
 
     public WellnessMetric updateWellnessMetric(UpdateWellnessMetricCommand updateWellnessMetricCommand){

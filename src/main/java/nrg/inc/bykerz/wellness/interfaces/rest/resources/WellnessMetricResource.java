@@ -1,5 +1,7 @@
 package nrg.inc.bykerz.wellness.interfaces.rest.resources;
 
+import java.time.LocalDateTime;
+
 public record WellnessMetricResource(
         Long id,
 
@@ -17,7 +19,9 @@ public record WellnessMetricResource(
 
         Float pressureHpa,
 
-        Boolean impactDetected
+        Boolean impactDetected,
+
+        LocalDateTime registeredAt
 ) {
 
 }

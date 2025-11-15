@@ -22,7 +22,8 @@ public class WellnessMetricResourceFromEntityAssembler {
 
                 entity.getAtmosphericPressure().pressureHpa(),
 
-                entity.getStatusImpact().impactDetected()
+                entity.getStatusImpact().impactDetected(),
+                entity.getRegisteredAt()
         );
     }
 }
