@@ -2,7 +2,7 @@ package nrg.inc.bykerz.vehicles.interfaces.rest.resources;
 
 public record VehicleResource(
         Long id,
-        Long ownerId,
+        OwnerResource owner,
         ModelResource model,
         String plate,
         String year
